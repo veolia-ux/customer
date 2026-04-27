@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Offerteaanvraag — Veolia</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
+    body {
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .logo-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-wrapper img { height: 60px; width: auto; }
+
+    .divider { border: none; border-top: 1px solid #eee; margin-bottom: 24px; }
+
+    h1 { font-size: 22px; color: #333; margin-bottom: 30px; text-align: center; }
+
+    .form-group { margin-bottom: 20px; }
+
+    label { display: block; font-size: 14px; font-weight: 600; color: #444; margin-bottom: 6px; }
+    label .fr { font-weight: 600; color: #444; font-style: normal; }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      transition: border 0.2s;
+      background-color: #fff;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 3px rgba(74,144,226,0.1);
+    }
+
+    input[readonly] {
+      background-color: #f0f0f0;
+      color: #999;
+      cursor: not-allowed;
+      border: 1px solid #ddd;
+    }
+
+    input.btw-valid   { border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,0.1); }
+    input.btw-invalid { border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,0.1); }
+
+    .btw-counter { font-size: 12px; color: #888; margin-top: 4px; text-align: right; }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    .taal-group { display: flex; gap: 12px; }
+    .taal-option { flex: 1; }
+    .taal-option input[type="radio"] { display: none; }
+    .taal-option label {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #555;
+      transition: all 0.2s;
+    }
+    .taal-option input[type="radio"]:checked + label {
+      border-color: #4a90e2;
+      background-color: #eef4fd;
+      color: #4a90e2;
+    }
+
+    .error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+    .submit-btn:hover     { background-color: #357abd; }
+    .submit-btn:disabled  { background-color: #aaa; cursor: not-allowed; }
+
+    .success-msg { display: none; text-align: center; padding: 30px; }
+    .success-msg h2 { color: #27ae60; margin-bottom: 10px; }
+    .success-msg p  { color: #666; font-size: 14px; line-height: 1.6; }
+
+    .byc-label { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="form-container">
+
+  <!-- ── Formulier ── -->
+  <div id="formSection">
+
+    <div class="logo-wrapper">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Veolia_logo.svg" alt="Veolia Logo" />
+    </div>
+
+    <hr class="divider" />
+
+    <h1>Offerteaanvraag / Demande de devis</h1>
+
+    <form id="offerteForm" onsubmit="handleSubmit(event)" novalidate>
+
+      <!-- Bedrijfsnaam -->
+      <div class="form-group">
+        <label for="bedrijfsnaam">Bedrijfsnaam / <span class="fr">Nom de l'entreprise</span></label>
+        <input type="text" id="bedrijfsnaam" placeholder="Uw bedrijfsnaam / Nom de votre entreprise" />
+        <div class="error-msg" id="err_bedrijfsnaam">Verplicht veld / Champ obligatoire</div>
+      </div>
+
+      <!-- Naam -->
+      <div class="form-group">
+        <label for="naam">Naam / <span class="fr">Nom</span></label>
+        <input type="text" id="naam" placeholder="Uw naam / Votre nom" />
+        <div class="error-msg" id="err_naam">Verplicht veld / Champ obligatoire</div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Emailadres / <span class="fr">Adresse email</span></label>
+        <input type="email" id="email" placeholder="uw@email.com" />
+        <div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
+      </div>
+
+      <!-- BTW -->
+      <div class="form-group">
+        <label for="btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
+        <input type="text" id="btw" placeholder="BE0123456789" maxlength="12" />
+        <div class="btw-counter" id="btw_counter">BE + 0/10 cijfers</div>
+        <div class="error-msg" id="err_btw">
+          Ongeldig formaat / Format invalide — BE + exact 10 cijfers (bv. BE0123456789)
+        </div>
+      </div>
+
+      <!-- Offerte -->
+      <div class="form-group">
+        <label for="offerte">
+          Waarvoor wenst u een offerte te ontvangen? /
+          <span class="fr">Pour quoi souhaitez-vous recevoir un devis?</span>
+        </label>
+        <textarea id="offerte" placeholder="Omschrijf uw aanvraag / Décrivez votre demande..."></textarea>
+        <div class="error-msg" id="err_offerte">Verplicht veld / Champ obligatoire</div>
+      </div>
+
+      <!-- Taal -->
+      <div class="form-group">
+        <label>Voorkeurstaal / <span class="fr">Langue préférée</span></label>
+        <div class="taal-group">
+          <div class="taal-option">
+            <input type="radio" name="taal" id="taal_nl"  value="NL" />
+            <label for="taal_nl">🇧🇪 NL</label>
+          </div>
+          <div class="taal-option">
+            <input type="radio" name="taal" id="taal_fr"  value="FR" />
+            <label for="taal_fr">🇫🇷 FR</label>
+          </div>
+          <div class="taal-option">
+            <input type="radio" name="taal" id="taal_eng" value="ENG" />
+            <label for="taal_eng">🇬🇧 ENG</label>
+          </div>
+        </div>
+        <div class="error-msg" id="err_taal">Selecteer een taal / Sélectionnez une langue</div>
+      </div>
+
+      <!-- BYC_ID (readonly, injecté via URL) -->
+      <div class="form-group">
+        <label for="byc_id">BYC_ID</label>
+        <input type="text" id="byc_id" readonly />
+        <div class="byc-label">Dit veld wordt automatisch ingevuld / Ce champ est rempli automatiquement</div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Verstuur aanvraag / Envoyer la demande
+      </button>
+
+    </form>
+  </div>
+
+  <!-- ── Success ── -->
+  <div class="success-msg" id="successMsg">
+    <h2>✅ Bedankt! / Merci!</h2>
+    <p>
+      Uw aanvraag is succesvol ontvangen.<br/>
+      U ontvangt een bevestiging per email.<br/><br/>
+      <em>Votre demande a été reçue avec succès.<br/>
+      Vous recevrez une confirmation par email.</em>
+    </p>
+  </div>
+
+</div>
+
+<script>
+  // ══════════════════════════════════════════════════════
+  //  ✅ SEULE CHOSE À MODIFIER : ton URL de déploiement
+  //     Apps Script PUBLIC (Anyone, even anonymous)
+  // ══════════════════════════════════════════════════════
+  const WEBAPP_URL = "https://script.google.com/macros/s/TON_DEPLOYMENT_ID/exec";
+
+  // ── Lecture byc_id depuis l'URL ──────────────────────
+  window.addEventListener('DOMContentLoaded', function () {
+    const params     = new URLSearchParams(window.location.search);
+    const bycFromUrl = params.get('byc_id');
+    if (bycFromUrl) {
+      document.getElementById('byc_id').value = decodeURIComponent(bycFromUrl);
+    }
+  });
+
+  // ── BTW logique ──────────────────────────────────────
+  const btwInput   = document.getElementById('btw');
+  const btwCounter = document.getElementById('btw_counter');
+
+  btwInput.addEventListener('keydown', function (e) {
+    if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
+      e.preventDefault();
+    }
+  });
+
+  btwInput.addEventListener('input', function () {
+    let val    = this.value.toUpperCase();
+    if (!val.startsWith('BE')) { val = 'BE' + val.replace(/^B?E?/, ''); }
+    let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
+    this.value = 'BE' + digits;
+
+    btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+    this.classList.remove('btw-valid', 'btw-invalid');
+
+    if (digits.length === 10) {
+      this.classList.add('btw-valid');
+      btwCounter.style.color = '#27ae60';
+    } else if (digits.length > 0) {
+      this.classList.add('btw-invalid');
+      btwCounter.style.color = '#e74c3c';
+    } else {
+      btwCounter.style.color = '#888';
+    }
+  });
+
+  btwInput.addEventListener('click', function () {
+    if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+  });
+
+  btwInput.addEventListener('focus', function () {
+    if (!this.value) { this.value = 'BE'; btwCounter.textContent = 'BE + 0/10 cijfers'; }
+    setTimeout(() => { if (this.selectionStart < 2) this.setSelectionRange(2, 2); }, 0);
+  });
+
+  // ── Validation ───────────────────────────────────────
+  function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
+
+  // ── Submit ───────────────────────────────────────────
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    // Reset erreurs
+    document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+    const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
+    const naam         = document.getElementById('naam').value.trim();
+    const email        = document.getElementById('email').value.trim();
+    const btw          = document.getElementById('btw').value.trim();
+    const offerte      = document.getElementById('offerte').value.trim();
+    const taalEl       = document.querySelector('input[name="taal"]:checked');
+    const byc_id       = document.getElementById('byc_id').value.trim();
+
+    let valid = true;
+
+    if (!bedrijfsnaam) { show('err_bedrijfsnaam'); valid = false; }
+    if (!naam)         { show('err_naam');         valid = false; }
+    if (!validateEmail(email)) { show('err_email'); valid = false; }
+    if (!validateBTW(btw))     { show('err_btw');   valid = false; }
+    if (!offerte)      { show('err_offerte');       valid = false; }
+    if (!taalEl)       { show('err_taal');          valid = false; }
+
+    if (!valid) return;
+
+    // UI : loading
+    const btn = document.getElementById('submitBtn');
+    btn.disabled    = true;
+    btn.innerHTML   = '<span class="spinner"></span>Bezig... / En cours...';
+
+    const formData = {
+      byc_id:       byc_id,
+      bedrijfsnaam: bedrijfsnaam,
+      naam:         naam,
+      email:        email,
+      btw:          btw.toUpperCase(),
+      offerte:      offerte,
+      taal:         taalEl.value,
+    };
+
+    // ✅ fetch vers Google Apps Script (doPost)
+    fetch(WEBAPP_URL, {
+      method:  'POST',
+      // ⚠️ "no-cors" est obligatoire car GAS ne renvoie pas les bons headers CORS
+      //    En contrepartie on ne peut pas lire la réponse — on suppose le succès
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(formData),
+    })
+    .then(function () {
+      // Avec no-cors on arrive toujours ici si la requête part
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('successMsg').style.display  = 'block';
+    })
+    .catch(function (err) {
+      alert('Er is een fout opgetreden / Une erreur est survenue:\n' + err.message);
+      btn.disabled  = false;
+      btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+    });
+  }
+
+  function show(id) { document.getElementById(id).style.display = 'block'; }
+</script>
+</body>
+</html>
