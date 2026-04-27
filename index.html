@@ -25,12 +25,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
-    .logo-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-
+    .logo-wrapper { display: flex; justify-content: center; margin-bottom: 24px; }
     .logo-wrapper img { height: 60px; width: auto; }
 
     .divider { border: none; border-top: 1px solid #eee; margin-bottom: 24px; }
@@ -67,7 +62,6 @@
       background-color: #f0f0f0;
       color: #999;
       cursor: not-allowed;
-      border: 1px solid #ddd;
     }
 
     input.btw-valid   { border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,0.1); }
@@ -112,8 +106,8 @@
       transition: background 0.2s;
       margin-top: 10px;
     }
-    .submit-btn:hover     { background-color: #357abd; }
-    .submit-btn:disabled  { background-color: #aaa; cursor: not-allowed; }
+    .submit-btn:hover    { background-color: #357abd; }
+    .submit-btn:disabled { background-color: #aaa; cursor: not-allowed; }
 
     .success-msg { display: none; text-align: center; padding: 30px; }
     .success-msg h2 { color: #27ae60; margin-bottom: 10px; }
@@ -121,7 +115,6 @@
 
     .byc-label { font-size: 11px; color: #aaa; margin-top: 4px; }
 
-    /* Spinner */
     .spinner {
       display: inline-block;
       width: 16px; height: 16px;
@@ -138,41 +131,34 @@
 <body>
 <div class="form-container">
 
-  <!-- ── Formulier ── -->
   <div id="formSection">
-
     <div class="logo-wrapper">
       <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Veolia_logo.svg" alt="Veolia Logo" />
     </div>
 
     <hr class="divider" />
-
     <h1>Offerteaanvraag / Demande de devis</h1>
 
     <form id="offerteForm" onsubmit="handleSubmit(event)" novalidate>
 
-      <!-- Bedrijfsnaam -->
       <div class="form-group">
         <label for="bedrijfsnaam">Bedrijfsnaam / <span class="fr">Nom de l'entreprise</span></label>
         <input type="text" id="bedrijfsnaam" placeholder="Uw bedrijfsnaam / Nom de votre entreprise" />
         <div class="error-msg" id="err_bedrijfsnaam">Verplicht veld / Champ obligatoire</div>
       </div>
 
-      <!-- Naam -->
       <div class="form-group">
         <label for="naam">Naam / <span class="fr">Nom</span></label>
         <input type="text" id="naam" placeholder="Uw naam / Votre nom" />
         <div class="error-msg" id="err_naam">Verplicht veld / Champ obligatoire</div>
       </div>
 
-      <!-- Email -->
       <div class="form-group">
         <label for="email">Emailadres / <span class="fr">Adresse email</span></label>
         <input type="email" id="email" placeholder="uw@email.com" />
         <div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
       </div>
 
-      <!-- BTW -->
       <div class="form-group">
         <label for="btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
         <input type="text" id="btw" placeholder="BE0123456789" maxlength="12" />
@@ -182,7 +168,6 @@
         </div>
       </div>
 
-      <!-- Offerte -->
       <div class="form-group">
         <label for="offerte">
           Waarvoor wenst u een offerte te ontvangen? /
@@ -192,7 +177,6 @@
         <div class="error-msg" id="err_offerte">Verplicht veld / Champ obligatoire</div>
       </div>
 
-      <!-- Taal -->
       <div class="form-group">
         <label>Voorkeurstaal / <span class="fr">Langue préférée</span></label>
         <div class="taal-group">
@@ -212,7 +196,6 @@
         <div class="error-msg" id="err_taal">Selecteer een taal / Sélectionnez une langue</div>
       </div>
 
-      <!-- BYC_ID (readonly, injecté via URL) -->
       <div class="form-group">
         <label for="byc_id">BYC_ID</label>
         <input type="text" id="byc_id" readonly />
@@ -226,7 +209,6 @@
     </form>
   </div>
 
-  <!-- ── Success ── -->
   <div class="success-msg" id="successMsg">
     <h2>✅ Bedankt! / Merci!</h2>
     <p>
@@ -240,22 +222,20 @@
 </div>
 
 <script>
-  // ══════════════════════════════════════════════════════
-  //  ✅ SEULE CHOSE À MODIFIER : ton URL de déploiement
-  //     Apps Script PUBLIC (Anyone, even anonymous)
-  // ══════════════════════════════════════════════════════
-  const WEBAPP_URL = "https://script.google.com/macros/s/TON_DEPLOYMENT_ID/exec";
+  // ══════════════════════════════════════════════════
+  //  ✅ REMPLACE PAR TON URL GAS (compte Gmail perso)
+  //     Déploiement → Anyone, even anonymous
+  // ══════════════════════════════════════════════════
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby9WWKXZyn8AmkhgswqxzmtH4m7h0a9HLEw1GJUorouPR9ylotjrGBsTrkIJPcFLzKP/exec";
 
-  // ── Lecture byc_id depuis l'URL ──────────────────────
+  // ── byc_id depuis URL ────────────────────────────
   window.addEventListener('DOMContentLoaded', function () {
-    const params     = new URLSearchParams(window.location.search);
-    const bycFromUrl = params.get('byc_id');
-    if (bycFromUrl) {
-      document.getElementById('byc_id').value = decodeURIComponent(bycFromUrl);
-    }
+    const params = new URLSearchParams(window.location.search);
+    const byc    = params.get('byc_id');
+    if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
   });
 
-  // ── BTW logique ──────────────────────────────────────
+  // ── BTW ──────────────────────────────────────────
   const btwInput   = document.getElementById('btw');
   const btwCounter = document.getElementById('btw_counter');
 
@@ -267,7 +247,7 @@
 
   btwInput.addEventListener('input', function () {
     let val    = this.value.toUpperCase();
-    if (!val.startsWith('BE')) { val = 'BE' + val.replace(/^B?E?/, ''); }
+    if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
     let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
     this.value = 'BE' + digits;
 
@@ -285,24 +265,20 @@
     }
   });
 
-  btwInput.addEventListener('click', function () {
-    if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-  });
-
-  btwInput.addEventListener('focus', function () {
+  btwInput.addEventListener('click',  function () { if (this.selectionStart < 2) this.setSelectionRange(2, 2); });
+  btwInput.addEventListener('focus',  function () {
     if (!this.value) { this.value = 'BE'; btwCounter.textContent = 'BE + 0/10 cijfers'; }
     setTimeout(() => { if (this.selectionStart < 2) this.setSelectionRange(2, 2); }, 0);
   });
 
-  // ── Validation ───────────────────────────────────────
+  // ── Validation ───────────────────────────────────
   function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
   function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
+  function show(id)         { document.getElementById(id).style.display = 'block'; }
 
-  // ── Submit ───────────────────────────────────────────
+  // ── Submit ───────────────────────────────────────
   function handleSubmit(e) {
     e.preventDefault();
-
-    // Reset erreurs
     document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
 
     const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
@@ -314,53 +290,43 @@
     const byc_id       = document.getElementById('byc_id').value.trim();
 
     let valid = true;
-
-    if (!bedrijfsnaam) { show('err_bedrijfsnaam'); valid = false; }
-    if (!naam)         { show('err_naam');         valid = false; }
-    if (!validateEmail(email)) { show('err_email'); valid = false; }
-    if (!validateBTW(btw))     { show('err_btw');   valid = false; }
-    if (!offerte)      { show('err_offerte');       valid = false; }
-    if (!taalEl)       { show('err_taal');          valid = false; }
-
+    if (!bedrijfsnaam)        { show('err_bedrijfsnaam'); valid = false; }
+    if (!naam)                { show('err_naam');         valid = false; }
+    if (!validateEmail(email)){ show('err_email');        valid = false; }
+    if (!validateBTW(btw))    { show('err_btw');          valid = false; }
+    if (!offerte)             { show('err_offerte');      valid = false; }
+    if (!taalEl)              { show('err_taal');         valid = false; }
     if (!valid) return;
 
-    // UI : loading
     const btn = document.getElementById('submitBtn');
-    btn.disabled    = true;
-    btn.innerHTML   = '<span class="spinner"></span>Bezig... / En cours...';
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
     const formData = {
-      byc_id:       byc_id,
-      bedrijfsnaam: bedrijfsnaam,
-      naam:         naam,
-      email:        email,
-      btw:          btw.toUpperCase(),
-      offerte:      offerte,
-      taal:         taalEl.value,
+      byc_id, bedrijfsnaam, naam, email,
+      btw:    btw.toUpperCase(),
+      offerte,
+      taal:   taalEl.value,
     };
 
-    // ✅ fetch vers Google Apps Script (doPost)
+    // ✅ no-cors obligatoire : GAS ne renvoie pas les headers CORS
+    //    La requête part bien, on ne peut juste pas lire la réponse
     fetch(WEBAPP_URL, {
       method:  'POST',
-      // ⚠️ "no-cors" est obligatoire car GAS ne renvoie pas les bons headers CORS
-      //    En contrepartie on ne peut pas lire la réponse — on suppose le succès
       mode:    'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(formData),
     })
     .then(function () {
-      // Avec no-cors on arrive toujours ici si la requête part
       document.getElementById('formSection').style.display = 'none';
       document.getElementById('successMsg').style.display  = 'block';
     })
     .catch(function (err) {
-      alert('Er is een fout opgetreden / Une erreur est survenue:\n' + err.message);
+      alert('Fout / Erreur:\n' + err.message);
       btn.disabled  = false;
       btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
     });
   }
-
-  function show(id) { document.getElementById(id).style.display = 'block'; }
 </script>
 </body>
 </html>
