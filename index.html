@@ -226,107 +226,108 @@
   //  ✅ REMPLACE PAR TON URL GAS (compte Gmail perso)
   //     Déploiement → Anyone, even anonymous
   // ══════════════════════════════════════════════════
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzWP99jJ0JJIjsu7smuRNlj-X3aVsAUvmeO88lQsOhPVmBWuaWeFQzF_ZHRNlAjY2Op/exec";
+<script>
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwMtGZ02NrpeY3Ytcljou52L8zh5bwPkC9g16jJOnzrFyCUYk_vRwWREwdq60clz1n1/exec";
 
-  // ── byc_id depuis URL ────────────────────────────
-  window.addEventListener('DOMContentLoaded', function () {
-    const params = new URLSearchParams(window.location.search);
-    const byc    = params.get('byc_id');
-    if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
-  });
+window.addEventListener('DOMContentLoaded', function () {
+  const params = new URLSearchParams(window.location.search);
+  const byc = params.get('byc_id');
+  if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
+});
 
-  // ── BTW ──────────────────────────────────────────
-  const btwInput   = document.getElementById('btw');
-  const btwCounter = document.getElementById('btw_counter');
+const btwInput   = document.getElementById('btw');
+const btwCounter = document.getElementById('btw_counter');
 
-  btwInput.addEventListener('keydown', function (e) {
-    if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
-      e.preventDefault();
-    }
-  });
-
-  btwInput.addEventListener('input', function () {
-    let val    = this.value.toUpperCase();
-    if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
-    let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
-    this.value = 'BE' + digits;
-
-    btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
-    this.classList.remove('btw-valid', 'btw-invalid');
-
-    if (digits.length === 10) {
-      this.classList.add('btw-valid');
-      btwCounter.style.color = '#27ae60';
-    } else if (digits.length > 0) {
-      this.classList.add('btw-invalid');
-      btwCounter.style.color = '#e74c3c';
-    } else {
-      btwCounter.style.color = '#888';
-    }
-  });
-
-  btwInput.addEventListener('click',  function () { if (this.selectionStart < 2) this.setSelectionRange(2, 2); });
-  btwInput.addEventListener('focus',  function () {
-    if (!this.value) { this.value = 'BE'; btwCounter.textContent = 'BE + 0/10 cijfers'; }
-    setTimeout(() => { if (this.selectionStart < 2) this.setSelectionRange(2, 2); }, 0);
-  });
-
-  // ── Validation ───────────────────────────────────
-  function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-  function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
-  function show(id)         { document.getElementById(id).style.display = 'block'; }
-
-  // ── Submit ───────────────────────────────────────
-  function handleSubmit(e) {
+btwInput.addEventListener('keydown', function (e) {
+  if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
     e.preventDefault();
-    document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
-
-    const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
-    const naam         = document.getElementById('naam').value.trim();
-    const email        = document.getElementById('email').value.trim();
-    const btw          = document.getElementById('btw').value.trim();
-    const offerte      = document.getElementById('offerte').value.trim();
-    const taalEl       = document.querySelector('input[name="taal"]:checked');
-    const byc_id       = document.getElementById('byc_id').value.trim();
-
-    let valid = true;
-    if (!bedrijfsnaam)        { show('err_bedrijfsnaam'); valid = false; }
-    if (!naam)                { show('err_naam');         valid = false; }
-    if (!validateEmail(email)){ show('err_email');        valid = false; }
-    if (!validateBTW(btw))    { show('err_btw');          valid = false; }
-    if (!offerte)             { show('err_offerte');      valid = false; }
-    if (!taalEl)              { show('err_taal');         valid = false; }
-    if (!valid) return;
-
-    const btn = document.getElementById('submitBtn');
-    btn.disabled  = true;
-    btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
-
-    const formData = {
-      byc_id, bedrijfsnaam, naam, email,
-      btw:    btw.toUpperCase(),
-      offerte,
-      taal:   taalEl.value,
-    };
-
-    // ✅ no-cors obligatoire : GAS ne renvoie pas les headers CORS
-    //    La requête part bien, on ne peut juste pas lire la réponse
-    fetch(WEBAPP_URL, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(formData),
-    })
-    .then(function () {
-      document.getElementById('formSection').style.display = 'none';
-      document.getElementById('successMsg').style.display  = 'block';
-    })
-    .catch(function (err) {
-      alert('Fout / Erreur:\n' + err.message);
-      btn.disabled  = false;
-      btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-    });
   }
+});
+
+btwInput.addEventListener('input', function () {
+  let val    = this.value.toUpperCase();
+  if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
+  let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
+  this.value = 'BE' + digits;
+  btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+  this.classList.remove('btw-valid', 'btw-invalid');
+  if (digits.length === 10) {
+    this.classList.add('btw-valid');
+    btwCounter.style.color = '#27ae60';
+  } else if (digits.length > 0) {
+    this.classList.add('btw-invalid');
+    btwCounter.style.color = '#e74c3c';
+  } else {
+    btwCounter.style.color = '#888';
+  }
+});
+
+btwInput.addEventListener('click', function () {
+  if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+});
+
+btwInput.addEventListener('focus', function () {
+  if (!this.value) {
+    this.value = 'BE';
+    btwCounter.textContent = 'BE + 0/10 cijfers';
+  }
+  setTimeout(() => {
+    if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+  }, 0);
+});
+
+function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
+function show(id)         { document.getElementById(id).style.display = 'block'; }
+
+function handleSubmit(e) {
+  e.preventDefault();
+  document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+  const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
+  const naam         = document.getElementById('naam').value.trim();
+  const email        = document.getElementById('email').value.trim();
+  const btw          = document.getElementById('btw').value.trim();
+  const offerte      = document.getElementById('offerte').value.trim();
+  const taalEl       = document.querySelector('input[name="taal"]:checked');
+  const byc_id       = document.getElementById('byc_id').value.trim();
+
+  let valid = true;
+  if (!bedrijfsnaam)       { show('err_bedrijfsnaam'); valid = false; }
+  if (!naam)               { show('err_naam');         valid = false; }
+  if (!validateEmail(email)){ show('err_email');       valid = false; }
+  if (!validateBTW(btw))   { show('err_btw');          valid = false; }
+  if (!offerte)            { show('err_offerte');      valid = false; }
+  if (!taalEl)             { show('err_taal');         valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
+
+  // ✅ FormData au lieu de JSON — compatible no-cors
+  const formData = new FormData();
+  formData.append('byc_id',       byc_id);
+  formData.append('bedrijfsnaam', bedrijfsnaam);
+  formData.append('naam',         naam);
+  formData.append('email',        email);
+  formData.append('btw',          btw.toUpperCase());
+  formData.append('offerte',      offerte);
+  formData.append('taal',         taalEl.value);
+
+  fetch(WEBAPP_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    body:    formData,       // ✅ pas de JSON.stringify, pas de Content-Type header
+  })
+  .then(function () {
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successMsg').style.display  = 'block';
+  })
+  .catch(function (err) {
+    alert('Fout / Erreur:\n' + err.message);
+    btn.disabled  = false;
+    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+  });
+}
 </script>
-</body>
-</html>
