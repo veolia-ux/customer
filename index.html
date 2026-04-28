@@ -129,8 +129,8 @@
   </style>
 </head>
 <body>
-<div class="form-container">
 
+<div class="form-container">
   <div id="formSection">
     <div class="logo-wrapper">
       <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Veolia_logo.svg" alt="Veolia Logo" />
@@ -218,68 +218,69 @@
       Vous recevrez une confirmation par email.</em>
     </p>
   </div>
-
 </div>
 
 <script>
-  // ══════════════════════════════════════════════════
-  //  ✅ REMPLACE PAR TON URL GAS (compte Gmail perso)
-  //     Déploiement → Anyone, even anonymous
-  // ══════════════════════════════════════════════════
-<script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwnrWiI9IgOo9OGokOTLFnp7XEdUNVC9Fwi5Z-Fk06T-b-M-ZmHGaIUl2Ux7hAQFt0e/exec";
 
-  window.addEventListener('DOMContentLoaded', function () {
+// ✅ Tout dans DOMContentLoaded — garantit que le DOM est prêt
+window.addEventListener('DOMContentLoaded', function () {
+
+  // ── byc_id depuis URL ──────────────────────────────────
   const params = new URLSearchParams(window.location.search);
-  const byc = params.get('byc_id');
+  const byc    = params.get('byc_id');
   if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
-});
 
-const btwInput   = document.getElementById('btw');
-const btwCounter = document.getElementById('btw_counter');
+  // ── BTW ───────────────────────────────────────────────
+  const btwInput   = document.getElementById('btw');
+  const btwCounter = document.getElementById('btw_counter');
 
-btwInput.addEventListener('keydown', function (e) {
-  if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
-    e.preventDefault();
-  }
-});
+  btwInput.addEventListener('keydown', function (e) {
+    if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
+      e.preventDefault();
+    }
+  });
 
-btwInput.addEventListener('input', function () {
-  let val    = this.value.toUpperCase();
-  if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
-  let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
-  this.value = 'BE' + digits;
-  btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
-  this.classList.remove('btw-valid', 'btw-invalid');
-  if (digits.length === 10) {
-    this.classList.add('btw-valid');
-    btwCounter.style.color = '#27ae60';
-  } else if (digits.length > 0) {
-    this.classList.add('btw-invalid');
-    btwCounter.style.color = '#e74c3c';
-  } else {
-    btwCounter.style.color = '#888';
-  }
-});
+  btwInput.addEventListener('input', function () {
+    let val    = this.value.toUpperCase();
+    if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
+    let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
+    this.value = 'BE' + digits;
+    btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+    this.classList.remove('btw-valid', 'btw-invalid');
+    if (digits.length === 10) {
+      this.classList.add('btw-valid');
+      btwCounter.style.color = '#27ae60';
+    } else if (digits.length > 0) {
+      this.classList.add('btw-invalid');
+      btwCounter.style.color = '#e74c3c';
+    } else {
+      btwCounter.style.color = '#888';
+    }
+  });
 
-btwInput.addEventListener('click', function () {
-  if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-});
-
-btwInput.addEventListener('focus', function () {
-  if (!this.value) {
-    this.value = 'BE';
-    btwCounter.textContent = 'BE + 0/10 cijfers';
-  }
-  setTimeout(() => {
+  btwInput.addEventListener('click', function () {
     if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-  }, 0);
-});
+  });
 
+  btwInput.addEventListener('focus', function () {
+    if (!this.value) {
+      this.value = 'BE';
+      btwCounter.textContent = 'BE + 0/10 cijfers';
+    }
+    setTimeout(() => {
+      if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+    }, 0);
+  });
+
+}); // fin DOMContentLoaded
+
+// ── Validation ────────────────────────────────────────────
 function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
 function show(id)         { document.getElementById(id).style.display = 'block'; }
 
+// ── Submit ────────────────────────────────────────────────
 function handleSubmit(e) {
   e.preventDefault();
   document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
@@ -293,33 +294,33 @@ function handleSubmit(e) {
   const byc_id       = document.getElementById('byc_id').value.trim();
 
   let valid = true;
-  if (!bedrijfsnaam)        { show('err_bedrijfsnaam'); valid = false; }
-  if (!naam)                { show('err_naam');         valid = false; }
-  if (!validateEmail(email)){ show('err_email');        valid = false; }
-  if (!validateBTW(btw))    { show('err_btw');          valid = false; }
-  if (!offerte)             { show('err_offerte');      valid = false; }
-  if (!taalEl)              { show('err_taal');         valid = false; }
+  if (!bedrijfsnaam)         { show('err_bedrijfsnaam'); valid = false; }
+  if (!naam)                 { show('err_naam');         valid = false; }
+  if (!validateEmail(email)) { show('err_email');        valid = false; }
+  if (!validateBTW(btw))     { show('err_btw');          valid = false; }
+  if (!offerte)              { show('err_offerte');      valid = false; }
+  if (!taalEl)               { show('err_taal');         valid = false; }
   if (!valid) return;
 
   const btn = document.getElementById('submitBtn');
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-  // ✅ On encode en URL params — méthode la plus fiable avec no-cors
-  const params = new URLSearchParams();
-  params.append('byc_id',       byc_id);
-  params.append('bedrijfsnaam', bedrijfsnaam);
-  params.append('naam',         naam);
-  params.append('email',        email);
-  params.append('btw',          btw.toUpperCase());
-  params.append('offerte',      offerte);
-  params.append('taal',         taalEl.value);
+  // ✅ URLSearchParams — le plus fiable avec GAS + no-cors
+  const urlParams = new URLSearchParams();
+  urlParams.append('byc_id',       byc_id);
+  urlParams.append('bedrijfsnaam', bedrijfsnaam);
+  urlParams.append('naam',         naam);
+  urlParams.append('email',        email);
+  urlParams.append('btw',          btw.toUpperCase());
+  urlParams.append('offerte',      offerte);
+  urlParams.append('taal',         taalEl.value);
 
   fetch(WEBAPP_URL, {
     method:  'POST',
     mode:    'no-cors',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body:    params.toString(),
+    body:    urlParams.toString(),
   })
   .then(function () {
     document.getElementById('formSection').style.display = 'none';
@@ -332,3 +333,8 @@ function handleSubmit(e) {
   });
 }
 </script>
+
+</body>
+  
+</html>
+
