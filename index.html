@@ -227,9 +227,9 @@
   //     Déploiement → Anyone, even anonymous
   // ══════════════════════════════════════════════════
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwMtGZ02NrpeY3Ytcljou52L8zh5bwPkC9g16jJOnzrFyCUYk_vRwWREwdq60clz1n1/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwnrWiI9IgOo9OGokOTLFnp7XEdUNVC9Fwi5Z-Fk06T-b-M-ZmHGaIUl2Ux7hAQFt0e/exec";
 
-window.addEventListener('DOMContentLoaded', function () {
+  window.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const byc = params.get('byc_id');
   if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
@@ -293,32 +293,33 @@ function handleSubmit(e) {
   const byc_id       = document.getElementById('byc_id').value.trim();
 
   let valid = true;
-  if (!bedrijfsnaam)       { show('err_bedrijfsnaam'); valid = false; }
-  if (!naam)               { show('err_naam');         valid = false; }
-  if (!validateEmail(email)){ show('err_email');       valid = false; }
-  if (!validateBTW(btw))   { show('err_btw');          valid = false; }
-  if (!offerte)            { show('err_offerte');      valid = false; }
-  if (!taalEl)             { show('err_taal');         valid = false; }
+  if (!bedrijfsnaam)        { show('err_bedrijfsnaam'); valid = false; }
+  if (!naam)                { show('err_naam');         valid = false; }
+  if (!validateEmail(email)){ show('err_email');        valid = false; }
+  if (!validateBTW(btw))    { show('err_btw');          valid = false; }
+  if (!offerte)             { show('err_offerte');      valid = false; }
+  if (!taalEl)              { show('err_taal');         valid = false; }
   if (!valid) return;
 
   const btn = document.getElementById('submitBtn');
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-  // ✅ FormData au lieu de JSON — compatible no-cors
-  const formData = new FormData();
-  formData.append('byc_id',       byc_id);
-  formData.append('bedrijfsnaam', bedrijfsnaam);
-  formData.append('naam',         naam);
-  formData.append('email',        email);
-  formData.append('btw',          btw.toUpperCase());
-  formData.append('offerte',      offerte);
-  formData.append('taal',         taalEl.value);
+  // ✅ On encode en URL params — méthode la plus fiable avec no-cors
+  const params = new URLSearchParams();
+  params.append('byc_id',       byc_id);
+  params.append('bedrijfsnaam', bedrijfsnaam);
+  params.append('naam',         naam);
+  params.append('email',        email);
+  params.append('btw',          btw.toUpperCase());
+  params.append('offerte',      offerte);
+  params.append('taal',         taalEl.value);
 
   fetch(WEBAPP_URL, {
     method:  'POST',
     mode:    'no-cors',
-    body:    formData,       // ✅ pas de JSON.stringify, pas de Content-Type header
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body:    params.toString(),
   })
   .then(function () {
     document.getElementById('formSection').style.display = 'none';
