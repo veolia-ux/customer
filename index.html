@@ -221,15 +221,14 @@
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwnrWiI9IgOo9OGokOTLFnp7XEdUNVC9Fwi5Z-Fk06T-b-M-ZmHGaIUl2Ux7hAQFt0e/exec";
-
-// ✅ Tout dans DOMContentLoaded — garantit que le DOM est prêt
-window.addEventListener('DOMContentLoaded', function () {
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwnrWiI9IgOo9OGokOTLFnp7XEdUNVC9Fwi5Z-Fk06T-b-M-ZmHGaIUl2Ux7hAQFt0e/exec";
 
   // ── byc_id depuis URL ──────────────────────────────────
-  const params = new URLSearchParams(window.location.search);
-  const byc    = params.get('byc_id');
-  if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
+  window.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    const byc    = params.get('byc_id');
+    if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
+  });
 
   // ── BTW ───────────────────────────────────────────────
   const btwInput   = document.getElementById('btw');
@@ -273,68 +272,65 @@ window.addEventListener('DOMContentLoaded', function () {
     }, 0);
   });
 
-}); // fin DOMContentLoaded
+  // ── Validation ────────────────────────────────────────
+  function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
+  function show(id)         { document.getElementById(id).style.display = 'block'; }
 
-// ── Validation ────────────────────────────────────────────
-function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
-function show(id)         { document.getElementById(id).style.display = 'block'; }
+  // ── Submit ────────────────────────────────────────────
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
 
-// ── Submit ────────────────────────────────────────────────
-function handleSubmit(e) {
-  e.preventDefault();
-  document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+    const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
+    const naam         = document.getElementById('naam').value.trim();
+    const email        = document.getElementById('email').value.trim();
+    const btw          = document.getElementById('btw').value.trim();
+    const offerte      = document.getElementById('offerte').value.trim();
+    const taalEl       = document.querySelector('input[name="taal"]:checked');
+    const byc_id       = document.getElementById('byc_id').value.trim();
 
-  const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
-  const naam         = document.getElementById('naam').value.trim();
-  const email        = document.getElementById('email').value.trim();
-  const btw          = document.getElementById('btw').value.trim();
-  const offerte      = document.getElementById('offerte').value.trim();
-  const taalEl       = document.querySelector('input[name="taal"]:checked');
-  const byc_id       = document.getElementById('byc_id').value.trim();
+    let valid = true;
+    if (!bedrijfsnaam)         { show('err_bedrijfsnaam'); valid = false; }
+    if (!naam)                 { show('err_naam');         valid = false; }
+    if (!validateEmail(email)) { show('err_email');        valid = false; }
+    if (!validateBTW(btw))     { show('err_btw');          valid = false; }
+    if (!offerte)              { show('err_offerte');      valid = false; }
+    if (!taalEl)               { show('err_taal');         valid = false; }
+    if (!valid) return;
 
-  let valid = true;
-  if (!bedrijfsnaam)         { show('err_bedrijfsnaam'); valid = false; }
-  if (!naam)                 { show('err_naam');         valid = false; }
-  if (!validateEmail(email)) { show('err_email');        valid = false; }
-  if (!validateBTW(btw))     { show('err_btw');          valid = false; }
-  if (!offerte)              { show('err_offerte');      valid = false; }
-  if (!taalEl)               { show('err_taal');         valid = false; }
-  if (!valid) return;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-  const btn = document.getElementById('submitBtn');
-  btn.disabled  = true;
-  btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
+    const formData = {
+      byc_id,
+      bedrijfsnaam,
+      naam,
+      email,
+      btw: btw.toUpperCase(),
+      offerte,
+      taal: taalEl.value,
+    };
 
-  // ✅ URLSearchParams — le plus fiable avec GAS + no-cors
-  const urlParams = new URLSearchParams();
-  urlParams.append('byc_id',       byc_id);
-  urlParams.append('bedrijfsnaam', bedrijfsnaam);
-  urlParams.append('naam',         naam);
-  urlParams.append('email',        email);
-  urlParams.append('btw',          btw.toUpperCase());
-  urlParams.append('offerte',      offerte);
-  urlParams.append('taal',         taalEl.value);
-
-  fetch(WEBAPP_URL, {
-    method:  'POST',
-    mode:    'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body:    urlParams.toString(),
-  })
-  .then(function () {
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successMsg').style.display  = 'block';
-  })
-  .catch(function (err) {
-    alert('Fout / Erreur:\n' + err.message);
-    btn.disabled  = false;
-    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-  });
-}
+    // ✅ Original qui marchait — JSON + no-cors
+    fetch(WEBAPP_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(formData),
+    })
+    .then(function () {
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('successMsg').style.display  = 'block';
+    })
+    .catch(function (err) {
+      alert('Fout / Erreur:\n' + err.message);
+      btn.disabled  = false;
+      btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+    });
+  }
 </script>
 
 </body>
-  
 </html>
-
