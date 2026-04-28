@@ -221,7 +221,7 @@
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxhMangRFnZWGoGwFFxjnW3hfBHjSx_6vQjgAzunk3aAjA_CsoPmj_4J88X1J8wI14j/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwLP6oQ95-qk3DauF2dK1XOYVWgjcHyz2ywKLwgYiG-riAaQzHyGJ2gBLQctAydZefT/exec";
 
 // ✅ Tout dans DOMContentLoaded — garantit que le DOM est prêt
 window.addEventListener('DOMContentLoaded', function () {
@@ -316,23 +316,17 @@ function handleSubmit(e) {
   urlParams.append('offerte',      offerte);
   urlParams.append('taal',         taalEl.value);
 
-  fetch(WEBAPP_URL, {
+fetch(WEBAPP_URL, {
   method:  'POST',
+  mode:    'no-cors',
   headers: { 'Content-Type': 'application/json' },
   body:    JSON.stringify({ byc_id, bedrijfsnaam, naam, email, btw: btw.toUpperCase(), offerte, taal: taalEl.value }),
 })
-.then(function (response) {
-  console.log('Status:', response.status);
-  console.log('Type:', response.type);
-  return response.text();
-})
-.then(function (text) {
-  console.log('Réponse:', text);
+.then(function () {
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('successMsg').style.display  = 'block';
 })
 .catch(function (err) {
-  console.log('ERREUR:', err.message);
   alert('Fout / Erreur:\n' + err.message);
   btn.disabled  = false;
   btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
