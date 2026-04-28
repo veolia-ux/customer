@@ -317,20 +317,27 @@ function handleSubmit(e) {
   urlParams.append('taal',         taalEl.value);
 
   fetch(WEBAPP_URL, {
-    method:  'POST',
-    mode:    'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body:    urlParams.toString(),
-  })
-  .then(function () {
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successMsg').style.display  = 'block';
-  })
-  .catch(function (err) {
-    alert('Fout / Erreur:\n' + err.message);
-    btn.disabled  = false;
-    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-  });
+  method:  'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body:    JSON.stringify({ byc_id, bedrijfsnaam, naam, email, btw: btw.toUpperCase(), offerte, taal: taalEl.value }),
+})
+.then(function (response) {
+  console.log('Status:', response.status);
+  console.log('Type:', response.type);
+  return response.text();
+})
+.then(function (text) {
+  console.log('Réponse:', text);
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('successMsg').style.display  = 'block';
+})
+.catch(function (err) {
+  console.log('ERREUR:', err.message);
+  alert('Fout / Erreur:\n' + err.message);
+  btn.disabled  = false;
+  btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+});
+
 }
 </script>
 
