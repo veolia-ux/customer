@@ -64,12 +64,54 @@
       cursor: not-allowed;
     }
 
-    input.btw-valid   { border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,0.1); }
-    input.btw-invalid { border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,0.1); }
+    input.id-valid   { border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,0.1); }
+    input.id-invalid { border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,0.1); }
 
-    .btw-counter { font-size: 12px; color: #888; margin-top: 4px; text-align: right; }
+    .id-counter { font-size: 12px; color: #888; margin-top: 4px; text-align: right; }
 
     textarea { resize: vertical; min-height: 100px; }
+
+    /* Boutons radio pour le type d'ID */
+    .id-type-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .id-type-option {
+      flex: 1;
+    }
+
+    .id-type-option input[type="radio"] {
+      display: none;
+    }
+
+    .id-type-option label {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #555;
+      transition: all 0.2s;
+      margin-bottom: 0;
+    }
+
+    .id-type-option input[type="radio"]:checked + label {
+      border-color: #4a90e2;
+      background-color: #eef4fd;
+      color: #4a90e2;
+    }
+
+    .id-input-group {
+      display: none;
+    }
+
+    .id-input-group.active {
+      display: block;
+    }
 
     .taal-group { display: flex; gap: 12px; }
     .taal-option { flex: 1; }
@@ -159,12 +201,39 @@
         <div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
       </div>
 
+      <!-- NOUVEAU: Type d'identification -->
       <div class="form-group">
-        <label for="btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
-        <input type="text" id="btw" placeholder="BE0123456789" maxlength="12" />
-        <div class="btw-counter" id="btw_counter">BE + 0/10 cijfers</div>
-        <div class="error-msg" id="err_btw">
+        <label>Type identificatie / <span class="fr">Type d'identification</span></label>
+        <div class="id-type-selector">
+          <div class="id-type-option">
+            <input type="radio" id="id_type_btw" name="id_type" value="BTW" required />
+            <label for="id_type_btw">BTW / TVA</label>
+          </div>
+          <div class="id-type-option">
+            <input type="radio" id="id_type_ondernemingsnummer" name="id_type" value="ONDERNEMINGSNUMMER" required />
+            <label for="id_type_ondernemingsnummer">Ondernemingsnummer</label>
+          </div>
+        </div>
+        <div class="error-msg" id="err_id_type">Selecteer een type / Sélectionnez un type</div>
+      </div>
+
+      <!-- NOUVEAU: Champ BTW -->
+      <div class="form-group id-input-group" id="btw-input-group">
+        <label for="id_number_btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
+        <input type="text" id="id_number_btw" placeholder="BE0123456789" maxlength="14" />
+        <div class="id-counter" id="btw_counter">BE + 0/10 cijfers</div>
+        <div class="error-msg" id="err_id_number_btw">
           Ongeldig formaat / Format invalide — BE + exact 10 cijfers (bv. BE0123456789)
+        </div>
+      </div>
+
+      <!-- NOUVEAU: Champ Ondernemingsnummer -->
+      <div class="form-group id-input-group" id="ondernemingsnummer-input-group">
+        <label for="id_number_ondernemingsnummer">Ondernemingsnummer / <span class="fr">Numéro d'entreprise</span></label>
+        <input type="text" id="id_number_ondernemingsnummer" placeholder="0123456789" maxlength="10" />
+        <div class="id-counter" id="ondernemingsnummer_counter">0/10 cijfers</div>
+        <div class="error-msg" id="err_id_number_ondernemingsnummer">
+          Ongeldig formaat / Format invalide — exact 10 cijfers (bv. 0123456789)
         </div>
       </div>
 
@@ -231,8 +300,34 @@ window.addEventListener('DOMContentLoaded', function () {
   const byc    = params.get('byc_id');
   if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
 
+  // ── Gestion du type d'ID ───────────────────────────────
+  const idTypeRadios = document.querySelectorAll('input[name="id_type"]');
+  const btwInputGroup = document.getElementById('btw-input-group');
+  const ondernemingsnummerInputGroup = document.getElementById('ondernemingsnummer-input-group');
+  const btwInput = document.getElementById('id_number_btw');
+  const ondernemingsnummerInput = document.getElementById('id_number_ondernemingsnummer');
+
+  idTypeRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'BTW') {
+        btwInputGroup.classList.add('active');
+        ondernemingsnummerInputGroup.classList.remove('active');
+        btwInput.required = true;
+        ondernemingsnummerInput.required = false;
+        document.getElementById('err_id_number_btw').style.display = 'none';
+        document.getElementById('err_id_number_ondernemingsnummer').style.display = 'none';
+      } else {
+        btwInputGroup.classList.remove('active');
+        ondernemingsnummerInputGroup.classList.add('active');
+        btwInput.required = false;
+        ondernemingsnummerInput.required = true;
+        document.getElementById('err_id_number_btw').style.display = 'none';
+        document.getElementById('err_id_number_ondernemingsnummer').style.display = 'none';
+      }
+    });
+  });
+
   // ── BTW ───────────────────────────────────────────────
-  const btwInput   = document.getElementById('btw');
   const btwCounter = document.getElementById('btw_counter');
 
   btwInput.addEventListener('keydown', function (e) {
@@ -247,12 +342,12 @@ window.addEventListener('DOMContentLoaded', function () {
     let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
     this.value = 'BE' + digits;
     btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
-    this.classList.remove('btw-valid', 'btw-invalid');
+    this.classList.remove('id-valid', 'id-invalid');
     if (digits.length === 10) {
-      this.classList.add('btw-valid');
+      this.classList.add('id-valid');
       btwCounter.style.color = '#27ae60';
     } else if (digits.length > 0) {
-      this.classList.add('btw-invalid');
+      this.classList.add('id-invalid');
       btwCounter.style.color = '#e74c3c';
     } else {
       btwCounter.style.color = '#888';
@@ -273,11 +368,31 @@ window.addEventListener('DOMContentLoaded', function () {
     }, 0);
   });
 
+  // ── Ondernemingsnummer ────────────────────────────────
+  const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
+
+  ondernemingsnummerInput.addEventListener('input', function () {
+    let val = this.value.replace(/\D/g, '').substring(0, 10);
+    this.value = val;
+    ondernemingsnummerCounter.textContent = `${val.length}/10 cijfers`;
+    this.classList.remove('id-valid', 'id-invalid');
+    if (val.length === 10) {
+      this.classList.add('id-valid');
+      ondernemingsnummerCounter.style.color = '#27ae60';
+    } else if (val.length > 0) {
+      this.classList.add('id-invalid');
+      ondernemingsnummerCounter.style.color = '#e74c3c';
+    } else {
+      ondernemingsnummerCounter.style.color = '#888';
+    }
+  });
+
 }); // fin DOMContentLoaded
 
 // ── Validation ────────────────────────────────────────────
 function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
+function validateOndernemingsnummer(v) { return /^\d{10}$/.test(v.trim()); }
 function show(id)         { document.getElementById(id).style.display = 'block'; }
 
 // ── Submit ────────────────────────────────────────────────
@@ -288,48 +403,68 @@ function handleSubmit(e) {
   const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
   const naam         = document.getElementById('naam').value.trim();
   const email        = document.getElementById('email').value.trim();
-  const btw          = document.getElementById('btw').value.trim();
   const offerte      = document.getElementById('offerte').value.trim();
   const taalEl       = document.querySelector('input[name="taal"]:checked');
   const byc_id       = document.getElementById('byc_id').value.trim();
+  const idTypeEl     = document.querySelector('input[name="id_type"]:checked');
 
   let valid = true;
   if (!bedrijfsnaam)         { show('err_bedrijfsnaam'); valid = false; }
   if (!naam)                 { show('err_naam');         valid = false; }
   if (!validateEmail(email)) { show('err_email');        valid = false; }
-  if (!validateBTW(btw))     { show('err_btw');          valid = false; }
+  if (!idTypeEl)             { show('err_id_type');      valid = false; }
   if (!offerte)              { show('err_offerte');      valid = false; }
   if (!taalEl)               { show('err_taal');         valid = false; }
+
+  // Validation du numéro d'ID selon le type
+  let idNumber = '';
+  let idType = '';
+  if (idTypeEl) {
+    idType = idTypeEl.value;
+    if (idType === 'BTW') {
+      idNumber = document.getElementById('id_number_btw').value.trim();
+      if (!validateBTW(idNumber)) {
+        show('err_id_number_btw');
+        valid = false;
+      }
+    } else if (idType === 'ONDERNEMINGSNUMMER') {
+      idNumber = document.getElementById('id_number_ondernemingsnummer').value.trim();
+      if (!validateOndernemingsnummer(idNumber)) {
+        show('err_id_number_ondernemingsnummer');
+        valid = false;
+      }
+    }
+  }
+
   if (!valid) return;
 
   const btn = document.getElementById('submitBtn');
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-  // ✅ URLSearchParams — le plus fiable avec GAS + no-cors
-  const urlParams = new URLSearchParams();
-  urlParams.append('byc_id',       byc_id);
-  urlParams.append('bedrijfsnaam', bedrijfsnaam);
-  urlParams.append('naam',         naam);
-  urlParams.append('email',        email);
-  urlParams.append('btw',          btw.toUpperCase());
-  urlParams.append('offerte',      offerte);
-  urlParams.append('taal',         taalEl.value);
-
-fetch(WEBAPP_URL, {
-  method:  'POST',
-  mode:    'no-cors',
-  body:    JSON.stringify({ byc_id, bedrijfsnaam, naam, email, btw: btw.toUpperCase(), offerte, taal: taalEl.value }),
-})
-.then(function () {
-  document.getElementById('formSection').style.display = 'none';
-  document.getElementById('successMsg').style.display  = 'block';
-})
-.catch(function (err) {
-  alert('Fout / Erreur:\n' + err.message);
-  btn.disabled  = false;
-  btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-});
+  fetch(WEBAPP_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    body:    JSON.stringify({
+      byc_id,
+      bedrijfsnaam,
+      naam,
+      email,
+      id_type: idType,
+      id_number: idNumber,
+      offerte,
+      taal: taalEl.value
+    }),
+  })
+  .then(function () {
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successMsg').style.display  = 'block';
+  })
+  .catch(function (err) {
+    alert('Fout / Erreur:\n' + err.message);
+    btn.disabled  = false;
+    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+  });
 
 }
 </script>
