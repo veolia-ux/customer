@@ -71,7 +71,6 @@
 
     textarea { resize: vertical; min-height: 100px; }
 
-    /* Boutons radio pour le type d'ID */
     .id-type-selector {
       display: flex;
       gap: 12px;
@@ -201,7 +200,6 @@
         <div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
       </div>
 
-      <!-- NOUVEAU: Type d'identification -->
       <div class="form-group">
         <label>Type identificatie / <span class="fr">Type d'identification</span></label>
         <div class="id-type-selector">
@@ -217,7 +215,6 @@
         <div class="error-msg" id="err_id_type">Selecteer een type / Sélectionnez un type</div>
       </div>
 
-      <!-- NOUVEAU: Champ BTW -->
       <div class="form-group id-input-group" id="btw-input-group">
         <label for="id_number_btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
         <input type="text" id="id_number_btw" placeholder="BE0123456789" maxlength="14" />
@@ -227,7 +224,6 @@
         </div>
       </div>
 
-      <!-- NOUVEAU: Champ Ondernemingsnummer -->
       <div class="form-group id-input-group" id="ondernemingsnummer-input-group">
         <label for="id_number_ondernemingsnummer">Ondernemingsnummer / <span class="fr">Numéro d'entreprise</span></label>
         <input type="text" id="id_number_ondernemingsnummer" placeholder="0123456789" maxlength="10" />
@@ -292,15 +288,12 @@
 <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzxNamsmFN-WzSPz5LaiM8Ie3egoOul4xSiH-Qvljpu7vxFzBMjEpRiztsdjGQlKxh3/exec";
 
-// ✅ Tout dans DOMContentLoaded — garantit que le DOM est prêt
 window.addEventListener('DOMContentLoaded', function () {
 
-  // ── byc_id depuis URL ──────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   const byc    = params.get('byc_id');
   if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
 
-  // ── Gestion du type d'ID ───────────────────────────────
   const idTypeRadios = document.querySelectorAll('input[name="id_type"]');
   const btwInputGroup = document.getElementById('btw-input-group');
   const ondernemingsnummerInputGroup = document.getElementById('ondernemingsnummer-input-group');
@@ -327,7 +320,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // ── BTW ───────────────────────────────────────────────
   const btwCounter = document.getElementById('btw_counter');
 
   btwInput.addEventListener('keydown', function (e) {
@@ -368,7 +360,6 @@ window.addEventListener('DOMContentLoaded', function () {
     }, 0);
   });
 
-  // ── Ondernemingsnummer ────────────────────────────────
   const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
 
   ondernemingsnummerInput.addEventListener('input', function () {
@@ -387,15 +378,13 @@ window.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-}); // fin DOMContentLoaded
+});
 
-// ── Validation ────────────────────────────────────────────
 function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
 function validateOndernemingsnummer(v) { return /^\d{10}$/.test(v.trim()); }
 function show(id)         { document.getElementById(id).style.display = 'block'; }
 
-// ── Submit ────────────────────────────────────────────────
 function handleSubmit(e) {
   e.preventDefault();
   document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
@@ -416,7 +405,6 @@ function handleSubmit(e) {
   if (!offerte)              { show('err_offerte');      valid = false; }
   if (!taalEl)               { show('err_taal');         valid = false; }
 
-  // Validation du numéro d'ID selon le type
   let idNumber = '';
   let idType = '';
   if (idTypeEl) {
@@ -465,7 +453,6 @@ function handleSubmit(e) {
     btn.disabled  = false;
     btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
   });
-
 }
 </script>
 
