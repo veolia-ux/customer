@@ -450,9 +450,9 @@ fetch(WEBAPP_URL, {
   document.getElementById('successMsg').style.display  = 'block';
 })
 .catch(function (err) {
-  console.log('Fetch completed (no-cors mode)');
-  document.getElementById('formSection').style.display = 'none';
-  document.getElementById('successMsg').style.display  = 'block';
+  alert('Fout / Erreur:\n' + err.message);
+  btn.disabled  = false;
+  btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
 });
 
 </script>
