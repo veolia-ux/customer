@@ -236,7 +236,7 @@
       <div class="form-group">
         <label for="offerte">
           Waarvoor wenst u een offerte te ontvangen? /
-          <span class="fr">Pour quoi souhaitez-vous recevoir een devis?</span>
+          <span class="fr">Pour quoi souhaitez-vous recevoir un devis?</span>
         </label>
         <textarea id="offerte" placeholder="Omschrijf uw aanvraag / Décrivez votre demande..."></textarea>
         <div class="error-msg" id="err_offerte">Verplicht veld / Champ obligatoire</div>
@@ -286,7 +286,7 @@
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyf2ATD2lt8YipiCroAXB9r88Y73WEZUiCAv_sd2IZls0-g_CnP8mgNM7OatyhdLo88/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyuO44eqFCvIc0b42scU-FStFVltwv5m0jHU6CjUuObV49KS4HAA3D1mjTQaDa96LuN/exec";
 
 window.addEventListener('DOMContentLoaded', function () {
 
@@ -322,41 +322,43 @@ window.addEventListener('DOMContentLoaded', function () {
 
   const btwCounter = document.getElementById('btw_counter');
 
-btwInput.addEventListener('input', function () {
-  let val    = this.value.toUpperCase();
-  if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
-  let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
-  this.value = 'BE' + digits;
-  btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
-  this.classList.remove('id-valid', 'id-invalid');
-  if (digits.length === 10) {
-    this.classList.add('id-valid');
-    btwCounter.style.color = '#27ae60';
-  } else if (digits.length > 0) {
-    this.classList.add('id-invalid');
-    btwCounter.style.color = '#e74c3c';
-  } else {
-    btwCounter.style.color = '#888';
-  }
-});
+  btwInput.addEventListener('keydown', function (e) {
+    if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
+      e.preventDefault();
+    }
+  });
 
-btwInput.addEventListener('focus', function () {
-  if (!this.value) {
-    this.value = 'BE';
-    btwCounter.textContent = 'BE + 0/10 cijfers';
-    setTimeout(() => this.setSelectionRange(2, 2), 0);
-  }
-});
+  btwInput.addEventListener('input', function () {
+    let val    = this.value.toUpperCase();
+    if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
+    let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
+    this.value = 'BE' + digits;
+    btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+    this.classList.remove('id-valid', 'id-invalid');
+    if (digits.length === 10) {
+      this.classList.add('id-valid');
+      btwCounter.style.color = '#27ae60';
+    } else if (digits.length > 0) {
+      this.classList.add('id-invalid');
+      btwCounter.style.color = '#e74c3c';
+    } else {
+      btwCounter.style.color = '#888';
+    }
+  });
 
-btwInput.addEventListener('click', function () {
-  if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-});
+  btwInput.addEventListener('click', function () {
+    if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+  });
 
-btwInput.addEventListener('keydown', function (e) {
-  if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
-    e.preventDefault();
-  }
-});
+  btwInput.addEventListener('focus', function () {
+    if (!this.value) {
+      this.value = 'BE';
+      btwCounter.textContent = 'BE + 0/10 cijfers';
+    }
+    setTimeout(() => {
+      if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+    }, 0);
+  });
 
   const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
 
@@ -428,31 +430,30 @@ function handleSubmit(e) {
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-  const formData = new FormData();
-  formData.append('byc_id', byc_id);
-  formData.append('bedrijfsnaam', bedrijfsnaam);
-  formData.append('naam', naam);
-  formData.append('email', email);
-  formData.append('id_type', idType);
-  formData.append('id_number', idNumber);
-  formData.append('offerte', offerte);
-  formData.append('taal', taalEl.value);
-
-fetch(WEBAPP_URL, {
-  method:  'POST',
-  mode:    'no-cors',
-  body:    formData
-})
-.then(function () {
-  document.getElementById('formSection').style.display = 'none';
-  document.getElementById('successMsg').style.display  = 'block';
-})
-.catch(function (err) {
-  alert('Fout / Erreur:\n' + err.message);
-  btn.disabled  = false;
-  btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-});
-
+  fetch(WEBAPP_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    body:    JSON.stringify({
+      byc_id,
+      bedrijfsnaam,
+      naam,
+      email,
+      id_type: idType,
+      id_number: idNumber,
+      offerte,
+      taal: taalEl.value
+    }),
+  })
+  .then(function () {
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successMsg').style.display  = 'block';
+  })
+  .catch(function (err) {
+    alert('Fout / Erreur:\n' + err.message);
+    btn.disabled  = false;
+    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+  });
+}
 </script>
 
 </body>
