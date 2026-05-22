@@ -322,43 +322,41 @@ window.addEventListener('DOMContentLoaded', function () {
 
   const btwCounter = document.getElementById('btw_counter');
 
-  btwInput.addEventListener('keydown', function (e) {
-    if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
-      e.preventDefault();
-    }
-  });
+btwInput.addEventListener('input', function () {
+  let val    = this.value.toUpperCase();
+  if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
+  let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
+  this.value = 'BE' + digits;
+  btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+  this.classList.remove('id-valid', 'id-invalid');
+  if (digits.length === 10) {
+    this.classList.add('id-valid');
+    btwCounter.style.color = '#27ae60';
+  } else if (digits.length > 0) {
+    this.classList.add('id-invalid');
+    btwCounter.style.color = '#e74c3c';
+  } else {
+    btwCounter.style.color = '#888';
+  }
+});
 
-  btwInput.addEventListener('input', function () {
-    let val    = this.value.toUpperCase();
-    if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
-    let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
-    this.value = 'BE' + digits;
-    btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
-    this.classList.remove('id-valid', 'id-invalid');
-    if (digits.length === 10) {
-      this.classList.add('id-valid');
-      btwCounter.style.color = '#27ae60';
-    } else if (digits.length > 0) {
-      this.classList.add('id-invalid');
-      btwCounter.style.color = '#e74c3c';
-    } else {
-      btwCounter.style.color = '#888';
-    }
-  });
+btwInput.addEventListener('focus', function () {
+  if (!this.value) {
+    this.value = 'BE';
+    btwCounter.textContent = 'BE + 0/10 cijfers';
+    setTimeout(() => this.setSelectionRange(2, 2), 0);
+  }
+});
 
-  btwInput.addEventListener('click', function () {
-    if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-  });
+btwInput.addEventListener('click', function () {
+  if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+});
 
-  btwInput.addEventListener('focus', function () {
-    if (!this.value) {
-      this.value = 'BE';
-      btwCounter.textContent = 'BE + 0/10 cijfers';
-    }
-    setTimeout(() => {
-      if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-    }, 0);
-  });
+btwInput.addEventListener('keydown', function (e) {
+  if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
+    e.preventDefault();
+  }
+});
 
   const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
 
