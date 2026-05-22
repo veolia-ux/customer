@@ -236,7 +236,7 @@
       <div class="form-group">
         <label for="offerte">
           Waarvoor wenst u een offerte te ontvangen? /
-          <span class="fr">Pour quoi souhaitez-vous recevoir un devis?</span>
+          <span class="fr">Pour quoi souhaitez-vous recevoir een devis?</span>
         </label>
         <textarea id="offerte" placeholder="Omschrijf uw aanvraag / Décrivez votre demande..."></textarea>
         <div class="error-msg" id="err_offerte">Verplicht veld / Champ obligatoire</div>
@@ -286,7 +286,7 @@
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzBWW0GcQvGVIM3B24GiZtDmFE2771-SlvWbOLq8jGpgiHo1fKYV6-EaBRcOWHM5omu/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxsdN3BmUuT_GEmXKAnKMC29qXepbkU7LV4JlW4EWdXXul1hDkwdq6OZGYjEJd_YkIk/exec";
 
 window.addEventListener('DOMContentLoaded', function () {
 
@@ -430,7 +430,6 @@ function handleSubmit(e) {
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-  // Créer FormData au lieu de JSON
   const formData = new FormData();
   formData.append('byc_id', byc_id);
   formData.append('bedrijfsnaam', bedrijfsnaam);
@@ -455,8 +454,6 @@ function handleSubmit(e) {
     btn.disabled  = false;
     btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
   });
-}
-
 }
 </script>
 
