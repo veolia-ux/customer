@@ -430,19 +430,21 @@ function handleSubmit(e) {
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
+  // Créer FormData au lieu de JSON
+  const formData = new FormData();
+  formData.append('byc_id', byc_id);
+  formData.append('bedrijfsnaam', bedrijfsnaam);
+  formData.append('naam', naam);
+  formData.append('email', email);
+  formData.append('id_type', idType);
+  formData.append('id_number', idNumber);
+  formData.append('offerte', offerte);
+  formData.append('taal', taalEl.value);
+
   fetch(WEBAPP_URL, {
     method:  'POST',
     mode:    'no-cors',
-    body:    JSON.stringify({
-      byc_id,
-      bedrijfsnaam,
-      naam,
-      email,
-      id_type: idType,
-      id_number: idNumber,
-      offerte,
-      taal: taalEl.value
-    }),
+    body:    formData
   })
   .then(function () {
     document.getElementById('formSection').style.display = 'none';
@@ -453,6 +455,8 @@ function handleSubmit(e) {
     btn.disabled  = false;
     btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
   });
+}
+
 }
 </script>
 
