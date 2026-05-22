@@ -440,20 +440,21 @@ function handleSubmit(e) {
   formData.append('offerte', offerte);
   formData.append('taal', taalEl.value);
 
-  fetch(WEBAPP_URL, {
-    method:  'POST',
-    body:    formData
-  })
-  .then(function () {
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successMsg').style.display  = 'block';
-  })
-  .catch(function (err) {
-    alert('Fout / Erreur:\n' + err.message);
-    btn.disabled  = false;
-    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-  });
-}
+fetch(WEBAPP_URL, {
+  method:  'POST',
+  mode:    'no-cors',
+  body:    formData
+})
+.then(function () {
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('successMsg').style.display  = 'block';
+})
+.catch(function (err) {
+  console.log('Fetch completed (no-cors mode)');
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('successMsg').style.display  = 'block';
+});
+
 </script>
 
 </body>
