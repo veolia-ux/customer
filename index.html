@@ -1,460 +1,464 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Offerteaanvraag — Veolia</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Offerteaanvraag — Veolia</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
 
-    body {
-      background-color: #f4f6f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+body {
+  background-color: #f4f6f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
 
-    .form-container {
-      background: white;
-      border-radius: 12px;
-      padding: 40px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
+.form-container {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
 
-    .logo-wrapper { display: flex; justify-content: center; margin-bottom: 24px; }
-    .logo-wrapper img { height: 60px; width: auto; }
+.logo-wrapper { display: flex; justify-content: center; margin-bottom: 24px; }
+.logo-wrapper img { height: 60px; width: auto; }
 
-    .divider { border: none; border-top: 1px solid #eee; margin-bottom: 24px; }
+.divider { border: none; border-top: 1px solid #eee; margin-bottom: 24px; }
 
-    h1 { font-size: 22px; color: #333; margin-bottom: 30px; text-align: center; }
+h1 { font-size: 22px; color: #333; margin-bottom: 30px; text-align: center; }
 
-    .form-group { margin-bottom: 20px; }
+.form-group { margin-bottom: 20px; }
 
-    label { display: block; font-size: 14px; font-weight: 600; color: #444; margin-bottom: 6px; }
-    label .fr { font-weight: 600; color: #444; font-style: normal; }
+label { display: block; font-size: 14px; font-weight: 600; color: #444; margin-bottom: 6px; }
+label .fr { font-weight: 600; color: #444; font-style: normal; }
 
-    input[type="text"],
-    input[type="email"],
-    textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      color: #333;
-      transition: border 0.2s;
-      background-color: #fff;
-    }
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  transition: border 0.2s;
+  background-color: #fff;
+}
 
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #4a90e2;
-      box-shadow: 0 0 0 3px rgba(74,144,226,0.1);
-    }
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74,144,226,0.1);
+}
 
-    input[readonly] {
-      background-color: #f0f0f0;
-      color: #999;
-      cursor: not-allowed;
-    }
+input[readonly] {
+  background-color: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+}
 
-    input.id-valid   { border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,0.1); }
-    input.id-invalid { border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,0.1); }
+input.id-valid   { border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,0.1); }
+input.id-invalid { border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,0.1); }
 
-    .id-counter { font-size: 12px; color: #888; margin-top: 4px; text-align: right; }
+.id-counter { font-size: 12px; color: #888; margin-top: 4px; text-align: right; }
 
-    textarea { resize: vertical; min-height: 100px; }
+textarea { resize: vertical; min-height: 100px; }
 
-    .id-type-selector {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
+.id-type-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
 
-    .id-type-option {
-      flex: 1;
-    }
+.id-type-option {
+  flex: 1;
+}
 
-    .id-type-option input[type="radio"] {
-      display: none;
-    }
+.id-type-option input[type="radio"] {
+  display: none;
+}
 
-    .id-type-option label {
-      display: block;
-      text-align: center;
-      padding: 10px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      color: #555;
-      transition: all 0.2s;
-      margin-bottom: 0;
-    }
+.id-type-option label {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+  transition: all 0.2s;
+  margin-bottom: 0;
+}
 
-    .id-type-option input[type="radio"]:checked + label {
-      border-color: #4a90e2;
-      background-color: #eef4fd;
-      color: #4a90e2;
-    }
+.id-type-option input[type="radio"]:checked + label {
+  border-color: #4a90e2;
+  background-color: #eef4fd;
+  color: #4a90e2;
+}
 
-    .id-input-group {
-      display: none;
-    }
+.id-input-group {
+  display: none;
+}
 
-    .id-input-group.active {
-      display: block;
-    }
+.id-input-group.active {
+  display: block;
+}
 
-    .taal-group { display: flex; gap: 12px; }
-    .taal-option { flex: 1; }
-    .taal-option input[type="radio"] { display: none; }
-    .taal-option label {
-      display: block;
-      text-align: center;
-      padding: 10px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      color: #555;
-      transition: all 0.2s;
-    }
-    .taal-option input[type="radio"]:checked + label {
-      border-color: #4a90e2;
-      background-color: #eef4fd;
-      color: #4a90e2;
-    }
+.taal-group { display: flex; gap: 12px; }
+.taal-option { flex: 1; }
+.taal-option input[type="radio"] { display: none; }
+.taal-option label {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+  transition: all 0.2s;
+}
+.taal-option input[type="radio"]:checked + label {
+  border-color: #4a90e2;
+  background-color: #eef4fd;
+  color: #4a90e2;
+}
 
-    .error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
+.error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
 
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 10px;
-    }
-    .submit-btn:hover    { background-color: #357abd; }
-    .submit-btn:disabled { background-color: #aaa; cursor: not-allowed; }
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 10px;
+}
+.submit-btn:hover    { background-color: #357abd; }
+.submit-btn:disabled { background-color: #aaa; cursor: not-allowed; }
 
-    .success-msg { display: none; text-align: center; padding: 30px; }
-    .success-msg h2 { color: #27ae60; margin-bottom: 10px; }
-    .success-msg p  { color: #666; font-size: 14px; line-height: 1.6; }
+.success-msg { display: none; text-align: center; padding: 30px; }
+.success-msg h2 { color: #27ae60; margin-bottom: 10px; }
+.success-msg p  { color: #666; font-size: 14px; line-height: 1.6; }
 
-    .byc-label { font-size: 11px; color: #aaa; margin-top: 4px; }
+.byc-label { font-size: 11px; color: #aaa; margin-top: 4px; }
 
-    .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid #fff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
-
 <div class="form-container">
-  <div id="formSection">
-    <div class="logo-wrapper">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Veolia_logo.svg" alt="Veolia Logo" />
-    </div>
+<div id="formSection">
+<div class="logo-wrapper">
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Veolia_logo.svg" alt="Veolia Logo" />
+</div>
+<hr class="divider" />
+<h1>Offerteaanvraag / Demande de devis</h1>
 
-    <hr class="divider" />
-    <h1>Offerteaanvraag / Demande de devis</h1>
+<form id="offerteForm" onsubmit="handleSubmit(event)" novalidate>
 
-    <form id="offerteForm" onsubmit="handleSubmit(event)" novalidate>
+<div class="form-group">
+<label for="bedrijfsnaam">Bedrijfsnaam / <span class="fr">Nom de l'entreprise</span></label>
+<input type="text" id="bedrijfsnaam" placeholder="Uw bedrijfsnaam / Nom de votre entreprise" />
+<div class="error-msg" id="err_bedrijfsnaam">Verplicht veld / Champ obligatoire</div>
+</div>
 
-      <div class="form-group">
-        <label for="bedrijfsnaam">Bedrijfsnaam / <span class="fr">Nom de l'entreprise</span></label>
-        <input type="text" id="bedrijfsnaam" placeholder="Uw bedrijfsnaam / Nom de votre entreprise" />
-        <div class="error-msg" id="err_bedrijfsnaam">Verplicht veld / Champ obligatoire</div>
-      </div>
+<div class="form-group">
+<label for="naam">Naam / <span class="fr">Nom</span></label>
+<input type="text" id="naam" placeholder="Uw naam / Votre nom" />
+<div class="error-msg" id="err_naam">Verplicht veld / Champ obligatoire</div>
+</div>
 
-      <div class="form-group">
-        <label for="naam">Naam / <span class="fr">Nom</span></label>
-        <input type="text" id="naam" placeholder="Uw naam / Votre nom" />
-        <div class="error-msg" id="err_naam">Verplicht veld / Champ obligatoire</div>
-      </div>
+<div class="form-group">
+<label for="email">Emailadres / <span class="fr">Adresse email</span></label>
+<input type="email" id="email" placeholder="uw@email.com" />
+<div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
+</div>
 
-      <div class="form-group">
-        <label for="email">Emailadres / <span class="fr">Adresse email</span></label>
-        <input type="email" id="email" placeholder="uw@email.com" />
-        <div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
-      </div>
+<div class="form-group">
+<label>Type identificatie / <span class="fr">Type d'identification</span></label>
+<div class="id-type-selector">
+<div class="id-type-option">
+<input type="radio" id="id_type_btw" name="id_type" value="BTW" required />
+<label for="id_type_btw">BTW / TVA</label>
+</div>
+<div class="id-type-option">
+<input type="radio" id="id_type_ondernemingsnummer" name="id_type" value="ONDERNEMINGSNUMMER" required />
+<label for="id_type_ondernemingsnummer">Ondernemingsnummer / Numéro d'entreprise</label>
+</div>
+</div>
+<div class="error-msg" id="err_id_type">Selecteer een type / Sélectionnez un type</div>
+</div>
 
-      <div class="form-group">
-        <label>Type identificatie / <span class="fr">Type d'identification</span></label>
-        <div class="id-type-selector">
-          <div class="id-type-option">
-            <input type="radio" id="id_type_btw" name="id_type" value="BTW" required />
-            <label for="id_type_btw">BTW / TVA</label>
-          </div>
-          <div class="id-type-option">
-            <input type="radio" id="id_type_ondernemingsnummer" name="id_type" value="ONDERNEMINGSNUMMER" required />
-            <label for="id_type_ondernemingsnummer">Ondernemingsnummer / Numéro d'entreprise</label>
-          </div>
-        </div>
-        <div class="error-msg" id="err_id_type">Selecteer een type / Sélectionnez un type</div>
-      </div>
+<div class="form-group id-input-group" id="btw-input-group">
+<label for="id_number_btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
+<input type="text" id="id_number_btw" placeholder="BE0123456789" maxlength="14" />
+<div class="id-counter" id="btw_counter">BE + 0/10 cijfers</div>
+<div class="error-msg" id="err_id_number_btw">
+Ongeldig formaat / Format invalide — BE + exact 10 cijfers (bv. BE0123456789)
+</div>
+</div>
 
-      <div class="form-group id-input-group" id="btw-input-group">
-        <label for="id_number_btw">BTW Nummer / <span class="fr">Numéro TVA</span></label>
-        <input type="text" id="id_number_btw" placeholder="BE0123456789" maxlength="14" />
-        <div class="id-counter" id="btw_counter">BE + 0/10 cijfers</div>
-        <div class="error-msg" id="err_id_number_btw">
-          Ongeldig formaat / Format invalide — BE + exact 10 cijfers (bv. BE0123456789)
-        </div>
-      </div>
+<div class="form-group id-input-group" id="ondernemingsnummer-input-group">
+<label for="id_number_ondernemingsnummer">Ondernemingsnummer / <span class="fr">Numéro d'entreprise</span></label>
+<input type="text" id="id_number_ondernemingsnummer" placeholder="0123456789" maxlength="10" />
+<div class="id-counter" id="ondernemingsnummer_counter">0/10 cijfers</div>
+<div class="error-msg" id="err_id_number_ondernemingsnummer">
+Ongeldig formaat / Format invalide — exact 10 cijfers (bv. 0123456789)
+</div>
+</div>
 
-      <div class="form-group id-input-group" id="ondernemingsnummer-input-group">
-        <label for="id_number_ondernemingsnummer">Ondernemingsnummer / <span class="fr">Numéro d'entreprise</span></label>
-        <input type="text" id="id_number_ondernemingsnummer" placeholder="0123456789" maxlength="10" />
-        <div class="id-counter" id="ondernemingsnummer_counter">0/10 cijfers</div>
-        <div class="error-msg" id="err_id_number_ondernemingsnummer">
-          Ongeldig formaat / Format invalide — exact 10 cijfers (bv. 0123456789)
-        </div>
-      </div>
+<div class="form-group">
+<label for="offerte">
+Waarvoor wenst u een offerte te ontvangen? /
+<span class="fr">Pour quoi souhaitez-vous recevoir un devis?</span>
+</label>
+<textarea id="offerte" placeholder="Omschrijf uw aanvraag / Décrivez votre demande..."></textarea>
+<div class="error-msg" id="err_offerte">Verplicht veld / Champ obligatoire</div>
+</div>
 
-      <div class="form-group">
-        <label for="offerte">
-          Waarvoor wenst u een offerte te ontvangen? /
-          <span class="fr">Pour quoi souhaitez-vous recevoir un devis?</span>
-        </label>
-        <textarea id="offerte" placeholder="Omschrijf uw aanvraag / Décrivez votre demande..."></textarea>
-        <div class="error-msg" id="err_offerte">Verplicht veld / Champ obligatoire</div>
-      </div>
+<div class="form-group">
+<label>Voorkeurstaal / <span class="fr">Langue préférée</span></label>
+<div class="taal-group">
+<div class="taal-option">
+<input type="radio" name="taal" id="taal_nl"  value="NL" />
+<label for="taal_nl">🇧🇪 NL</label>
+</div>
+<div class="taal-option">
+<input type="radio" name="taal" id="taal_fr"  value="FR" />
+<label for="taal_fr">🇫🇷 FR</label>
+</div>
+<div class="taal-option">
+<input type="radio" name="taal" id="taal_eng" value="ENG" />
+<label for="taal_eng">🇬🇧 ENG</label>
+</div>
+</div>
+<div class="error-msg" id="err_taal">Selecteer een taal / Sélectionnez une langue</div>
+</div>
 
-      <div class="form-group">
-        <label>Voorkeurstaal / <span class="fr">Langue préférée</span></label>
-        <div class="taal-group">
-          <div class="taal-option">
-            <input type="radio" name="taal" id="taal_nl"  value="NL" />
-            <label for="taal_nl">🇧🇪 NL</label>
-          </div>
-          <div class="taal-option">
-            <input type="radio" name="taal" id="taal_fr"  value="FR" />
-            <label for="taal_fr">🇫🇷 FR</label>
-          </div>
-          <div class="taal-option">
-            <input type="radio" name="taal" id="taal_eng" value="ENG" />
-            <label for="taal_eng">🇬🇧 ENG</label>
-          </div>
-        </div>
-        <div class="error-msg" id="err_taal">Selecteer een taal / Sélectionnez une langue</div>
-      </div>
+<div class="form-group">
+<label for="byc_id">BYC_ID</label>
+<input type="text" id="byc_id" readonly />
+<div class="byc-label">Dit veld wordt automatisch ingevuld / Ce champ est rempli automatiquement</div>
+</div>
 
-      <div class="form-group">
-        <label for="byc_id">BYC_ID</label>
-        <input type="text" id="byc_id" readonly />
-        <div class="byc-label">Dit veld wordt automatisch ingevuld / Ce champ est rempli automatiquement</div>
-      </div>
+<button type="submit" class="submit-btn" id="submitBtn">
+Verstuur aanvraag / Envoyer la demande
+</button>
 
-      <button type="submit" class="submit-btn" id="submitBtn">
-        Verstuur aanvraag / Envoyer la demande
-      </button>
-
-    </form>
-  </div>
-
-  <div class="success-msg" id="successMsg">
-    <h2>✅ Bedankt! / Merci!</h2>
-    <p>
-      Uw aanvraag is succesvol ontvangen.<br/>
-      U ontvangt een bevestiging per email.<br/><br/>
-      <em>Votre demande a été reçue avec succès.<br/>
-      Vous recevrez une confirmation par email.</em>
-    </p>
-  </div>
+</form>
+</div>
+<div class="success-msg" id="successMsg">
+<h2>✅ Bedankt! / Merci!</h2>
+<p>
+Uw aanvraag is succesvol ontvangen.<br/>
+U ontvangt een bevestiging per email.<br/><br/>
+<em>Votre demande a été reçue avec succès.<br/>
+Vous recevrez une confirmation par email.</em>
+</p>
+</div>
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyuO44eqFCvIc0b42scU-FStFVltwv5m0jHU6CjUuObV49KS4HAA3D1mjTQaDa96LuN/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwYLqA_N_0cl6em8jPAiOuUId-zD1Ts0klRPzjuJbodsii46NCaFM3Q3n3WQD2WnnYX/exec";
 
 window.addEventListener('DOMContentLoaded', function () {
+const params = new URLSearchParams(window.location.search);
+const byc = params.get('byc_id');
+if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
 
-  const params = new URLSearchParams(window.location.search);
-  const byc    = params.get('byc_id');
-  if (byc) document.getElementById('byc_id').value = decodeURIComponent(byc);
+const idTypeRadios = document.querySelectorAll('input[name="id_type"]');
+const btwInputGroup = document.getElementById('btw-input-group');
+const ondernemingsnummerInputGroup = document.getElementById('ondernemingsnummer-input-group');
+const btwInput = document.getElementById('id_number_btw');
+const ondernemingsnummerInput = document.getElementById('id_number_ondernemingsnummer');
 
-  const idTypeRadios = document.querySelectorAll('input[name="id_type"]');
-  const btwInputGroup = document.getElementById('btw-input-group');
-  const ondernemingsnummerInputGroup = document.getElementById('ondernemingsnummer-input-group');
-  const btwInput = document.getElementById('id_number_btw');
-  const ondernemingsnummerInput = document.getElementById('id_number_ondernemingsnummer');
-
-  idTypeRadios.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      if (e.target.value === 'BTW') {
-        btwInputGroup.classList.add('active');
-        ondernemingsnummerInputGroup.classList.remove('active');
-        btwInput.required = true;
-        ondernemingsnummerInput.required = false;
-        document.getElementById('err_id_number_btw').style.display = 'none';
-        document.getElementById('err_id_number_ondernemingsnummer').style.display = 'none';
-      } else {
-        btwInputGroup.classList.remove('active');
-        ondernemingsnummerInputGroup.classList.add('active');
-        btwInput.required = false;
-        ondernemingsnummerInput.required = true;
-        document.getElementById('err_id_number_btw').style.display = 'none';
-        document.getElementById('err_id_number_ondernemingsnummer').style.display = 'none';
-      }
-    });
-  });
-
-  const btwCounter = document.getElementById('btw_counter');
-
-  btwInput.addEventListener('keydown', function (e) {
-    if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
-      e.preventDefault();
-    }
-  });
-
-  btwInput.addEventListener('input', function () {
-    let val    = this.value.toUpperCase();
-    if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
-    let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
-    this.value = 'BE' + digits;
-    btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
-    this.classList.remove('id-valid', 'id-invalid');
-    if (digits.length === 10) {
-      this.classList.add('id-valid');
-      btwCounter.style.color = '#27ae60';
-    } else if (digits.length > 0) {
-      this.classList.add('id-invalid');
-      btwCounter.style.color = '#e74c3c';
-    } else {
-      btwCounter.style.color = '#888';
-    }
-  });
-
-  btwInput.addEventListener('click', function () {
-    if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-  });
-
-  btwInput.addEventListener('focus', function () {
-    if (!this.value) {
-      this.value = 'BE';
-      btwCounter.textContent = 'BE + 0/10 cijfers';
-    }
-    setTimeout(() => {
-      if (this.selectionStart < 2) this.setSelectionRange(2, 2);
-    }, 0);
-  });
-
-  const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
-
-  ondernemingsnummerInput.addEventListener('input', function () {
-    let val = this.value.replace(/\D/g, '').substring(0, 10);
-    this.value = val;
-    ondernemingsnummerCounter.textContent = `${val.length}/10 cijfers`;
-    this.classList.remove('id-valid', 'id-invalid');
-    if (val.length === 10) {
-      this.classList.add('id-valid');
-      ondernemingsnummerCounter.style.color = '#27ae60';
-    } else if (val.length > 0) {
-      this.classList.add('id-invalid');
-      ondernemingsnummerCounter.style.color = '#e74c3c';
-    } else {
-      ondernemingsnummerCounter.style.color = '#888';
-    }
-  });
-
+idTypeRadios.forEach(radio => {
+radio.addEventListener('change', (e) => {
+if (e.target.value === 'BTW') {
+btwInputGroup.classList.add('active');
+ondernemingsnummerInputGroup.classList.remove('active');
+btwInput.required = true;
+ondernemingsnummerInput.required = false;
+document.getElementById('err_id_number_btw').style.display = 'none';
+document.getElementById('err_id_number_ondernemingsnummer').style.display = 'none';
+} else {
+btwInputGroup.classList.remove('active');
+ondernemingsnummerInputGroup.classList.add('active');
+btwInput.required = false;
+ondernemingsnummerInput.required = true;
+document.getElementById('err_id_number_btw').style.display = 'none';
+document.getElementById('err_id_number_ondernemingsnummer').style.display = 'none';
+}
+});
 });
 
-function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-function validateBTW(v)   { return /^BE\d{10}$/i.test(v.trim()); }
-function validateOndernemingsnummer(v) { return /^\d{10}$/.test(v.trim()); }
-function show(id)         { document.getElementById(id).style.display = 'block'; }
+const btwCounter = document.getElementById('btw_counter');
+btwInput.addEventListener('keydown', function (e) {
+if (this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) {
+e.preventDefault();
+}
+});
+
+btwInput.addEventListener('input', function () {
+let val = this.value.toUpperCase();
+if (!val.startsWith('BE')) val = 'BE' + val.replace(/^B?E?/, '');
+let digits = val.substring(2).replace(/\D/g, '').substring(0, 10);
+this.value = 'BE' + digits;
+btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+this.classList.remove('id-valid', 'id-invalid');
+if (digits.length === 10) {
+this.classList.add('id-valid');
+btwCounter.style.color = '#27ae60';
+} else if (digits.length > 0) {
+this.classList.add('id-invalid');
+btwCounter.style.color = '#e74c3c';
+} else {
+btwCounter.style.color = '#888';
+}
+});
+
+btwInput.addEventListener('click', function () {
+if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+});
+
+btwInput.addEventListener('focus', function () {
+if (!this.value) {
+this.value = 'BE';
+btwCounter.textContent = 'BE + 0/10 cijfers';
+}
+setTimeout(() => {
+if (this.selectionStart < 2) this.setSelectionRange(2, 2);
+}, 0);
+});
+
+const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
+ondernemingsnummerInput.addEventListener('input', function () {
+let val = this.value.replace(/\D/g, '').substring(0, 10);
+this.value = val;
+ondernemingsnummerCounter.textContent = `${val.length}/10 cijfers`;
+this.classList.remove('id-valid', 'id-invalid');
+if (val.length === 10) {
+this.classList.add('id-valid');
+ondernemingsnummerCounter.style.color = '#27ae60';
+} else if (val.length > 0) {
+this.classList.add('id-invalid');
+ondernemingsnummerCounter.style.color = '#e74c3c';
+} else {
+ondernemingsnummerCounter.style.color = '#888';
+}
+});
+});
+
+function validateEmail(v) {
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
+function validateBTW(v) {
+return /^BE\d{10}$/i.test(v.trim());
+}
+
+function validateOndernemingsnummer(v) {
+return /^\d{10}$/.test(v.trim());
+}
+
+function show(id) {
+document.getElementById(id).style.display = 'block';
+}
 
 function handleSubmit(e) {
-  e.preventDefault();
-  document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+e.preventDefault();
+document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
 
-  const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
-  const naam         = document.getElementById('naam').value.trim();
-  const email        = document.getElementById('email').value.trim();
-  const offerte      = document.getElementById('offerte').value.trim();
-  const taalEl       = document.querySelector('input[name="taal"]:checked');
-  const byc_id       = document.getElementById('byc_id').value.trim();
-  const idTypeEl     = document.querySelector('input[name="id_type"]:checked');
+const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
+const naam = document.getElementById('naam').value.trim();
+const email = document.getElementById('email').value.trim();
+const offerte = document.getElementById('offerte').value.trim();
+const taalEl = document.querySelector('input[name="taal"]:checked');
+const byc_id = document.getElementById('byc_id').value.trim();
+const idTypeEl = document.querySelector('input[name="id_type"]:checked');
 
-  let valid = true;
-  if (!bedrijfsnaam)         { show('err_bedrijfsnaam'); valid = false; }
-  if (!naam)                 { show('err_naam');         valid = false; }
-  if (!validateEmail(email)) { show('err_email');        valid = false; }
-  if (!idTypeEl)             { show('err_id_type');      valid = false; }
-  if (!offerte)              { show('err_offerte');      valid = false; }
-  if (!taalEl)               { show('err_taal');         valid = false; }
+let valid = true;
 
-  let idNumber = '';
-  let idType = '';
-  if (idTypeEl) {
-    idType = idTypeEl.value;
-    if (idType === 'BTW') {
-      idNumber = document.getElementById('id_number_btw').value.trim();
-      if (!validateBTW(idNumber)) {
-        show('err_id_number_btw');
-        valid = false;
-      }
-    } else if (idType === 'ONDERNEMINGSNUMMER') {
-      idNumber = document.getElementById('id_number_ondernemingsnummer').value.trim();
-      if (!validateOndernemingsnummer(idNumber)) {
-        show('err_id_number_ondernemingsnummer');
-        valid = false;
-      }
-    }
-  }
+if (!bedrijfsnaam) { show('err_bedrijfsnaam'); valid = false; }
+if (!naam) { show('err_naam'); valid = false; }
+if (!validateEmail(email)) { show('err_email'); valid = false; }
+if (!idTypeEl) { show('err_id_type'); valid = false; }
+if (!offerte) { show('err_offerte'); valid = false; }
+if (!taalEl) { show('err_taal'); valid = false; }
 
-  if (!valid) return;
+let idNumber = '';
+let idType = '';
 
-  const btn = document.getElementById('submitBtn');
-  btn.disabled  = true;
-  btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
+if (idTypeEl) {
+idType = idTypeEl.value;
+if (idType === 'BTW') {
+idNumber = document.getElementById('id_number_btw').value.trim();
+if (!validateBTW(idNumber)) { show('err_id_number_btw'); valid = false; }
+} else if (idType === 'ONDERNEMINGSNUMMER') {
+idNumber = document.getElementById('id_number_ondernemingsnummer').value.trim();
+if (!validateOndernemingsnummer(idNumber)) { show('err_id_number_ondernemingsnummer'); valid = false; }
+}
+}
 
-  fetch(WEBAPP_URL, {
-    method:  'POST',
-    mode:    'no-cors',
-    body:    JSON.stringify({
-      byc_id,
-      bedrijfsnaam,
-      naam,
-      email,
-      id_type: idType,
-      id_number: idNumber,
-      offerte,
-      taal: taalEl.value
-    }),
-  })
-  .then(function () {
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successMsg').style.display  = 'block';
-  })
-  .catch(function (err) {
-    alert('Fout / Erreur:\n' + err.message);
-    btn.disabled  = false;
-    btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
-  });
+if (!valid) return;
+
+const btn = document.getElementById('submitBtn');
+btn.disabled = true;
+btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
+
+fetch(WEBAPP_URL, {
+method: 'POST',
+mode: 'no-cors',
+body: JSON.stringify({
+byc_id,
+bedrijfsnaam,
+naam,
+email,
+id_type: idType,
+id_number: idNumber,
+offerte,
+taal: taalEl.value
+}),
+})
+.then(function () {
+document.getElementById('formSection').style.display = 'none';
+document.getElementById('successMsg').style.display = 'block';
+})
+.catch(function (err) {
+alert('Fout / Erreur:\n' + err.message);
+btn.disabled = false;
+btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+});
 }
 </script>
-
 </body>
 </html>
