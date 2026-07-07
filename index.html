@@ -139,6 +139,43 @@ textarea { resize: vertical; min-height: 100px; }
 
 .error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
 
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-group label {
+  margin-bottom: 0;
+  font-weight: 400;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.checkbox-group a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.checkbox-group a:hover {
+  text-decoration: underline;
+}
+
 .submit-btn {
   width: 100%;
   padding: 14px;
@@ -267,8 +304,17 @@ Waarvoor wenst u een offerte te ontvangen? /
 <div class="form-group">
 <label for="byc_id">BYC_ID</label>
 <input type="text" id="byc_id" readonly />
-<div class="byc-label">Dit veld wordt automatisch ingevuld / Ce champ est rempli automatiquement</div>
+<div class="byc-label">Dit veld wordt automatisch ingevuld / Ce champ is rempli automatiquement</div>
 </div>
+
+<!-- NOUVEAU CHECKBOX DE CONSENTEMENT -->
+<div class="checkbox-group">
+<input type="checkbox" id="consent_checkbox" />
+<label for="consent_checkbox">
+I agree that Veolia may contact me regarding waste collection services. I have read the <a href="#" target="_blank">Privacy Policy</a>. I can withdraw my consent at any time.
+</label>
+</div>
+<div class="error-msg" id="err_consent">Vous devez accepter pour continuer / U moet accepteren om door te gaan</div>
 
 <button type="submit" class="submit-btn" id="submitBtn">
 Verstuur aanvraag / Envoyer la demande
@@ -405,6 +451,7 @@ const offerte = document.getElementById('offerte').value.trim();
 const taalEl = document.querySelector('input[name="taal"]:checked');
 const byc_id = document.getElementById('byc_id').value.trim();
 const idTypeEl = document.querySelector('input[name="id_type"]:checked');
+const consentCheckbox = document.getElementById('consent_checkbox').checked;
 
 let valid = true;
 
@@ -414,6 +461,7 @@ if (!validateEmail(email)) { show('err_email'); valid = false; }
 if (!idTypeEl) { show('err_id_type'); valid = false; }
 if (!offerte) { show('err_offerte'); valid = false; }
 if (!taalEl) { show('err_taal'); valid = false; }
+if (!consentCheckbox) { show('err_consent'); valid = false; }
 
 let idNumber = '';
 let idType = '';
