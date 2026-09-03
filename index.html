@@ -44,6 +44,7 @@ label .fr { font-weight: 600; color: #444; font-style: normal; }
 
 input[type="text"],
 input[type="email"],
+input[type="tel"],
 textarea {
   width: 100%;
   padding: 10px 14px;
@@ -57,6 +58,7 @@ textarea {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
+input[type="tel"]:focus,
 textarea:focus {
   outline: none;
   border-color: #4a90e2;
@@ -138,6 +140,19 @@ textarea { resize: vertical; min-height: 100px; }
 }
 
 .error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
+
+/* 🆕 Alerte de doublon (distincte des erreurs classiques, plus visible) */
+.duplicate-alert {
+  display: none;
+  background-color: #fdecea;
+  border: 1px solid #e74c3c;
+  color: #c0392b;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
 
 .checkbox-group {
   display: flex;
@@ -240,6 +255,13 @@ textarea { resize: vertical; min-height: 100px; }
 <div class="error-msg" id="err_email">Geldig emailadres vereist / Adresse email valide requise</div>
 </div>
 
+<!-- 🆕 Point 2 — Numéro de téléphone -->
+<div class="form-group">
+<label for="telefoon">Telefoonnummer / <span class="fr">Numéro de téléphone</span></label>
+<input type="tel" id="telefoon" placeholder="+32 4XX XX XX XX" />
+<div class="error-msg" id="err_telefoon">Ongeldig telefoonnummer / Numéro de téléphone invalide</div>
+</div>
+
 <div class="form-group">
 <label>Type identificatie / <span class="fr">Type d'identification</span></label>
 <div class="id-type-selector">
@@ -273,6 +295,9 @@ Ongeldig formaat / Format invalide — exact 10 cijfers (bv. 0123456789)
 </div>
 </div>
 
+<!-- 🆕 Point 1 — Message trilingue si le numéro existe déjà en base -->
+<div class="duplicate-alert" id="err_duplicate"></div>
+
 <div class="form-group">
 <label for="offerte">
 Waarvoor wenst u een offerte te ontvangen? /
@@ -298,7 +323,7 @@ Waarvoor wenst u een offerte te ontvangen? /
 <label for="taal_eng">🇬🇧 ENG</label>
 </div>
 </div>
-<div class="error-msg" id="err_taal">Selecteer een taal / Sélectionnez une langue</div>
+<div class="error-msg" id="err_taal">Selecteer een taal / Sélectionnez een taal</div>
 </div>
 
 <div class="form-group">
@@ -307,7 +332,6 @@ Waarvoor wenst u een offerte te ontvangen? /
 <div class="byc-label">Dit veld wordt automatisch ingevuld / Ce champ is rempli automatiquement</div>
 </div>
 
-<!-- NOUVEAU CHECKBOX DE CONSENTEMENT -->
 <div class="checkbox-group">
 <input type="checkbox" id="consent_checkbox" />
 <label for="consent_checkbox">
@@ -334,7 +358,7 @@ Vous recevrez une confirmation par email.</em>
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwPEaVU_TBpf4LE3rdZVDXHHad51L0HS6mlYhxEvS8h5a1xZeiLzcopkdmnopBTZgSi/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwE3UdCAp8CEhahgIBtdpkZZl0E4B15iegjgNeF7BPzA5no86wdytEouBok9XwTPSjp/exec";
 
 window.addEventListener('DOMContentLoaded', function () {
 const params = new URLSearchParams(window.location.search);
@@ -349,6 +373,7 @@ const ondernemingsnummerInput = document.getElementById('id_number_ondernemingsn
 
 idTypeRadios.forEach(radio => {
 radio.addEventListener('change', (e) => {
+document.getElementById('err_duplicate').style.display = 'none'; // 🆕 reset alerte doublon
 if (e.target.value === 'BTW') {
 btwInputGroup.classList.add('active');
 ondernemingsnummerInputGroup.classList.remove('active');
@@ -428,6 +453,11 @@ function validateEmail(v) {
 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+function validatePhone(v) { // 🆕
+const cleaned = v.replace(/[\s().-]/g, '');
+return /^\+?\d{8,15}$/.test(cleaned);
+}
+
 function validateBTW(v) {
 return /^BE\d{10}$/i.test(v.trim());
 }
@@ -443,10 +473,12 @@ document.getElementById(id).style.display = 'block';
 function handleSubmit(e) {
 e.preventDefault();
 document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+document.getElementById('err_duplicate').style.display = 'none'; // 🆕
 
 const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
 const naam = document.getElementById('naam').value.trim();
 const email = document.getElementById('email').value.trim();
+const telefoon = document.getElementById('telefoon').value.trim(); // 🆕
 const offerte = document.getElementById('offerte').value.trim();
 const taalEl = document.querySelector('input[name="taal"]:checked');
 const byc_id = document.getElementById('byc_id').value.trim();
@@ -458,6 +490,7 @@ let valid = true;
 if (!bedrijfsnaam) { show('err_bedrijfsnaam'); valid = false; }
 if (!naam) { show('err_naam'); valid = false; }
 if (!validateEmail(email)) { show('err_email'); valid = false; }
+if (!validatePhone(telefoon)) { show('err_telefoon'); valid = false; } // 🆕
 if (!idTypeEl) { show('err_id_type'); valid = false; }
 if (!offerte) { show('err_offerte'); valid = false; }
 if (!taalEl) { show('err_taal'); valid = false; }
@@ -483,26 +516,43 @@ const btn = document.getElementById('submitBtn');
 btn.disabled = true;
 btn.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
+// 🆕 Plus de mode:'no-cors' → on peut lire la vraie réponse du serveur.
+// Content-Type: text/plain évite le preflight CORS (OPTIONS) non géré par Apps Script.
 fetch(WEBAPP_URL, {
 method: 'POST',
-mode: 'no-cors',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
 body: JSON.stringify({
 byc_id,
 bedrijfsnaam,
 naam,
 email,
+telefoon,
 id_type: idType,
 id_number: idNumber,
 offerte,
 taal: taalEl.value
 }),
 })
-.then(function () {
+.then(function (response) { return response.json(); })
+.then(function (result) {
+if (result.success) {
 document.getElementById('formSection').style.display = 'none';
 document.getElementById('successMsg').style.display = 'block';
+} else if (result.code === 'DUPLICATE') {
+const dupEl = document.getElementById('err_duplicate');
+dupEl.textContent = result.message;
+dupEl.style.display = 'block';
+dupEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+btn.disabled = false;
+btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+} else {
+alert('Fout / Erreur / Error:\n' + (result.error || 'Onbekende fout / Erreur inconnue / Unknown error'));
+btn.disabled = false;
+btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+}
 })
 .catch(function (err) {
-alert('Fout / Erreur:\n' + err.message);
+alert('Fout / Erreur / Error:\n' + err.message);
 btn.disabled = false;
 btn.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
 });
