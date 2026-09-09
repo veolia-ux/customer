@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Annulering — Veolia</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 40px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .logo-wrapper {
+      margin-bottom: 24px;
+    }
+
+    .logo-wrapper img {
+      height: 50px;
+      width: auto;
+    }
+
+    h1 {
+      font-size: 18px;
+      color: #333333;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #666666;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn-danger {
+      background-color: #e74c3c;
+      color: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-danger:disabled {
+      background-color: #aaaaaa;
+      cursor: not-allowed;
+    }
+
+    .icon-title {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="logo-wrapper">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/4/48/Veolia_logo.svg"
+        alt="Veolia Logo"
+      />
+    </div>
+
+    <!-- Loading state -->
+    <div id="loadingState">
+      <p>Bezig met laden... / Chargement... / Loading...</p>
+    </div>
+
+    <!-- Confirm state (shown when the lead is valid and not yet cancelled) -->
+    <div id="confirmState" class="hidden">
+      <div class="icon-title">⚠️</div>
+      <h1 id="confirmTitle"></h1>
+      <p id="confirmText"></p>
+      <button class="btn btn-danger" id="confirmBtn" onclick="performCancel()">
+        <span id="confirmBtnText"></span>
+      </button>
+    </div>
+
+    <!-- Success state -->
+    <div id="successState" class="hidden">
+      <div class="icon-title">✅</div>
+      <h1 id="successTitle"></h1>
+      <p id="successText"></p>
+    </div>
+
+    <!-- Already cancelled state -->
+    <div id="alreadyState" class="hidden">
+      <div class="icon-title">ℹ️</div>
+      <h1 id="alreadyTitle"></h1>
+      <p id="alreadyText"></p>
+    </div>
+
+    <!-- Not found / error state -->
+    <div id="errorState" class="hidden">
+      <div class="icon-title">❌</div>
+      <h1 id="errorTitle"></h1>
+      <p id="errorText"></p>
+    </div>
+  </div>
+
+  <script>
+    // Apps Script Web App URL — must match the backend deployment.
+    const WEBAPP_URL =
+      "https://script.google.com/macros/s/AKfycbxd8R_kebLze2O-fzyUZisVJT6WHwDwEJKDEKeOhDrYQH-QVbUHBYEuHKHq6Rf6n2mn/exec";
+
+    // Trilingual text dictionary
+    const TEXTS = {
+      NL: {
+        confirmTitle: 'Bevestig annulering',
+        confirmText:
+          'Weet u zeker dat u niet meer geïnteresseerd bent? Deze actie kan niet ongedaan worden gemaakt.',
+        confirmBtn: 'Ja, annuleren',
+        successTitle: 'Geannuleerd',
+        successText:
+          'Uw aanvraag werd succesvol geannuleerd. Bedankt voor uw bericht.',
+        alreadyTitle: 'Al geannuleerd',
+        alreadyText: 'U heeft deze aanvraag al eerder geannuleerd.',
+        errorTitle: 'Niet gevonden',
+        errorText: 'We konden uw aanvraag niet vinden.',
+        genericError: 'Er is een fout opgetreden. Probeer het later opnieuw.'
+      },
+      FR: {
+        confirmTitle: "Confirmez l'annulation",
+        confirmText:
+          "Êtes-vous sûr(e) de ne plus être intéressé(e) ? Cette action est irréversible.",
+        confirmBtn: 'Oui, annuler',
+        successTitle: 'Annulé',
+        successText:
+          "Votre demande a été annulée avec succès. Merci pour votre message.",
+        alreadyTitle: 'Déjà annulé',
+        alreadyText: 'Vous avez déjà annulé cette demande.',
+        errorTitle: 'Introuvable',
+        errorText: "Nous n'avons pas retrouvé votre demande.",
+        genericError: "Une erreur s'est produite. Merci de réessayer plus tard."
+      },
+      ENG: {
+        confirmTitle: 'Confirm cancellation',
+        confirmText:
+          'Are you sure you are no longer interested? This action cannot be undone.',
+        confirmBtn: 'Yes, cancel',
+        successTitle: 'Cancelled',
+        successText:
+          'Your request has been successfully cancelled. Thank you for letting us know.',
+        alreadyTitle: 'Already cancelled',
+        alreadyText: 'You have already cancelled this request.',
+        errorTitle: 'Not found',
+        errorText: 'We could not find your request.',
+        genericError: 'Something went wrong. Please try again later.'
+      }
+    };
+
+    let currentLang = 'NL';
+    let currentId = '';
+
+    function getText(key) {
+      const dict = TEXTS[currentLang] || TEXTS.NL;
+      return dict[key];
+    }
+
+    function showState(stateId) {
+      const states = [
+        'loadingState',
+        'confirmState',
+        'successState',
+        'alreadyState',
+        'errorState'
+      ];
+
+      states.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+
+      document.getElementById(stateId).classList.remove('hidden');
+    }
+
+    function renderConfirmState() {
+      document.getElementById('confirmTitle').textContent = getText('confirmTitle');
+      document.getElementById('confirmText').textContent = getText('confirmText');
+      document.getElementById('confirmBtnText').textContent = getText('confirmBtn');
+      showState('confirmState');
+    }
+
+    function renderSuccessState() {
+      document.getElementById('successTitle').textContent = getText('successTitle');
+      document.getElementById('successText').textContent = getText('successText');
+      showState('successState');
+    }
+
+    function renderAlreadyState() {
+      document.getElementById('alreadyTitle').textContent = getText('alreadyTitle');
+      document.getElementById('alreadyText').textContent = getText('alreadyText');
+      showState('alreadyState');
+    }
+
+    function renderErrorState(customText) {
+      document.getElementById('errorTitle').textContent = getText('errorTitle');
+      document.getElementById('errorText').textContent = customText || getText('errorText');
+      showState('errorState');
+    }
+
+    /**
+     * Initial, read-only status check.
+     * Safe to be triggered automatically by email security scanners,
+     * since no data is modified here (confirm is NOT sent).
+     */
+    function checkStatus() {
+      const url = `${WEBAPP_URL}?action=cancel&id=${encodeURIComponent(currentId)}`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Server error: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(result => {
+          if (!result.success && result.code === 'NOT_FOUND') {
+            renderErrorState();
+            return;
+          }
+
+          if (!result.success && result.code === 'ALREADY_CANCELLED') {
+            renderAlreadyState();
+            return;
+          }
+
+          if (result.success && result.code === 'CONFIRM_REQUIRED') {
+            renderConfirmState();
+            return;
+          }
+
+          renderErrorState(getText('genericError'));
+        })
+        .catch(() => {
+          renderErrorState(getText('genericError'));
+        });
+    }
+
+    /**
+     * Actual cancellation, triggered only by a real user click on the
+     * confirmation button (confirm=1 is sent).
+     */
+    function performCancel() {
+      const btn = document.getElementById('confirmBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>...';
+
+      const url = `${WEBAPP_URL}?action=cancel&id=${encodeURIComponent(currentId)}&confirm=1`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Server error: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(result => {
+          if (result.success && result.code === 'CANCELLED') {
+            renderSuccessState();
+            return;
+          }
+
+          if (!result.success && result.code === 'ALREADY_CANCELLED') {
+            renderAlreadyState();
+            return;
+          }
+
+          renderErrorState(getText('genericError'));
+        })
+        .catch(() => {
+          renderErrorState(getText('genericError'));
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const params = new URLSearchParams(window.location.search);
+      currentId = params.get('id') || '';
+
+      const taalParam = (params.get('taal') || 'NL').toUpperCase();
+      currentLang = TEXTS[taalParam] ? taalParam : 'NL';
+
+      if (!currentId) {
+        renderErrorState();
+        return;
+      }
+
+      checkStatus();
+    });
+  </script>
+</body>
+</html>
