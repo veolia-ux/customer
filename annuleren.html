@@ -158,6 +158,29 @@
     // Apps Script Web App URL — must match the backend deployment.
     const WEBAPP_URL =
       "https://script.google.com/macros/s/AKfycbxGzZ7dPzZMniaIUnQicQ3GOaF9BhecnVhwD66ds3I6MZ_wkX_eikQdT4Uu7TrpwNk1/exec";
+    const TEXTS = {
+      NL: {
+        ...
+        successTitle: 'Geannuleerd',
+        successText:
+          'Uw aanvraag werd succesvol geannuleerd. U ontvangt hiervan ook een bevestiging per e-mail. Bedankt voor uw bericht.',
+        ...
+      },
+      FR: {
+        ...
+        successTitle: 'Annulé',
+        successText:
+          "Votre demande a été annulée avec succès. Vous recevrez également une confirmation par e-mail. Merci pour votre message.",
+        ...
+      },
+      ENG: {
+        ...
+        successTitle: 'Cancelled',
+        successText:
+          'Your request has been successfully cancelled. You will also receive a confirmation email. Thank you for letting us know.',
+        ...
+      }
+    };
 
     // Trilingual text dictionary
     const TEXTS = {
