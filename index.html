@@ -59,6 +59,11 @@
       margin-bottom: 20px;
     }
 
+    /* Champ complètement caché mais toujours présent et fonctionnel dans le DOM */
+    .visually-hidden {
+      display: none !important;
+    }
+
     label {
       display: block;
       font-size: 14px;
@@ -76,6 +81,7 @@
     input[type="text"],
     input[type="email"],
     input[type="tel"],
+    input[type="file"],
     textarea {
       width: 100%;
       padding: 10px 14px;
@@ -203,18 +209,6 @@
       display: none;
     }
 
-    .duplicate-alert {
-      display: none;
-      background-color: #fdecea;
-      border: 1px solid #e74c3c;
-      color: #c0392b;
-      padding: 14px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
     .checkbox-group {
       display: flex;
       align-items: flex-start;
@@ -316,6 +310,71 @@
       }
     }
 
+    /* Popup pour le cas "numéro déjà existant" */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-box h3 {
+      margin-bottom: 14px;
+      color: #333333;
+      font-size: 18px;
+    }
+
+    .modal-box p {
+      margin-bottom: 22px;
+      color: #666666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .modal-btn {
+      display: inline-block;
+      background-color: #4a90e2;
+      color: #ffffff;
+      padding: 12px 26px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .modal-btn:hover {
+      background-color: #357abd;
+    }
+
+    .modal-close {
+      display: block;
+      margin: 16px auto 0;
+      background: none;
+      border: none;
+      color: #999999;
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
     @media (max-width: 600px) {
       .form-container {
         padding: 24px;
@@ -363,19 +422,37 @@
           </div>
         </div>
 
+        <!-- Nom scindé en Voornaam / Achternaam pour clarifier ce qui est attendu -->
         <div class="form-group">
-          <label for="naam">
-            Naam /
-            <span class="fr">Nom</span>
+          <label for="voornaam">
+            Voornaam /
+            <span class="fr">Prénom</span>
           </label>
 
           <input
             type="text"
-            id="naam"
-            placeholder="Uw naam / Votre nom"
+            id="voornaam"
+            placeholder="Uw voornaam / Votre prénom"
           />
 
-          <div class="error-msg" id="err_naam">
+          <div class="error-msg" id="err_voornaam">
+            Verplicht veld / Champ obligatoire
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="achternaam">
+            Achternaam /
+            <span class="fr">Nom de famille</span>
+          </label>
+
+          <input
+            type="text"
+            id="achternaam"
+            placeholder="Uw achternaam / Votre nom de famille"
+          />
+
+          <div class="error-msg" id="err_achternaam">
             Verplicht veld / Champ obligatoire
           </div>
         </div>
@@ -504,8 +581,6 @@
           </div>
         </div>
 
-        <div class="duplicate-alert" id="err_duplicate"></div>
-
         <div class="form-group">
           <label for="offerte">
             Waarvoor wenst u een offerte te ontvangen? /
@@ -521,6 +596,38 @@
 
           <div class="error-msg" id="err_offerte">
             Verplicht veld / Champ obligatoire
+          </div>
+        </div>
+
+        <!-- Nouveau champ libre : infos concurrents, contexte, etc. -->
+        <div class="form-group">
+          <label for="extra_info">
+            Extra informatie (optioneel) /
+            <span class="fr">Informations supplémentaires (optionnel)</span>
+          </label>
+
+          <textarea
+            id="extra_info"
+            placeholder="Bv. huidig contract, concurrent, opmerkingen... / Ex : contrat actuel, concurrent, remarques..."
+          ></textarea>
+        </div>
+
+        <!-- Nouveau champ : photo (phase 2), optionnel -->
+        <div class="form-group">
+          <label for="photo">
+            Foto toevoegen (optioneel) /
+            <span class="fr">Ajouter une photo (optionnel)</span>
+          </label>
+
+          <input
+            type="file"
+            id="photo"
+            accept="image/*"
+          />
+
+          <div class="byc-label">
+            Bv. foto van uw huidig contract met de concurrent /
+            Ex : photo de votre contrat actuel avec le concurrent
           </div>
         </div>
 
@@ -567,19 +674,14 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="byc_id">BYC_ID</label>
-
+        <!-- BYC_ID : champ conservé et toujours rempli automatiquement,
+             mais totalement caché à l'utilisateur -->
+        <div class="form-group visually-hidden">
           <input
             type="text"
             id="byc_id"
             readonly
           />
-
-          <div class="byc-label">
-            Dit veld wordt automatisch ingevuld /
-            Ce champ est rempli automatiquement
-          </div>
         </div>
 
         <div class="checkbox-group">
@@ -623,6 +725,28 @@
     </div>
   </div>
 
+  <!-- Popup affichée quand le TVA/ondernemingsnummer existe déjà -->
+  <div class="modal-overlay" id="duplicateModal">
+    <div class="modal-box">
+      <h3 id="duplicateModalTitle"></h3>
+      <p id="duplicateModalText"></p>
+      <a
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="duplicateModalLink"
+        class="modal-btn"
+      ></a>
+      <button
+        type="button"
+        class="modal-close"
+        id="duplicateModalClose"
+      >
+        Sluiten / Fermer
+      </button>
+    </div>
+  </div>
+
   <script>
     const WEBAPP_URL =
       "https://script.google.com/macros/s/AKfycbxGzZ7dPzZMniaIUnQicQ3GOaF9BhecnVhwD66ds3I6MZ_wkX_eikQdT4Uu7TrpwNk1/exec";
@@ -646,30 +770,20 @@
 
     function showError(id) {
       const element = document.getElementById(id);
-
-      if (element) {
-        element.style.display = 'block';
-      }
+      if (element) element.style.display = 'block';
     }
 
     function hideElement(id) {
       const element = document.getElementById(id);
-
-      if (element) {
-        element.style.display = 'none';
-      }
+      if (element) element.style.display = 'none';
     }
 
     function updateSuccessMessage(language) {
-      const successTitle =
-        document.getElementById('successTitle');
-
-      const successText =
-        document.getElementById('successText');
+      const successTitle = document.getElementById('successTitle');
+      const successText = document.getElementById('successText');
 
       if (language === 'FR') {
         successTitle.textContent = '✅ Merci !';
-
         successText.innerHTML =
           'Votre demande de devis a bien été reçue.<br/><br/>' +
           'Un e-mail de confirmation vous a été envoyé. ' +
@@ -677,20 +791,55 @@
           'courriers indésirables ou dans votre dossier spam.';
       } else if (language === 'ENG') {
         successTitle.textContent = '✅ Thank you!';
-
         successText.innerHTML =
           'Your quote request has been successfully received.<br/><br/>' +
           'A confirmation email has been sent to you. ' +
           'Please note that it may be in your junk mail or spam folder.';
       } else {
         successTitle.textContent = '✅ Bedankt!';
-
         successText.innerHTML =
           'Uw offerteaanvraag werd succesvol ontvangen.<br/><br/>' +
           'U heeft een bevestigingsmail ontvangen. ' +
           'Het is mogelijk dat deze e-mail in uw ongewenste ' +
           'e-mails of spamfolder terechtgekomen is.';
       }
+    }
+
+    // Popup "numéro déjà existant" — texte + lien boutique selon la langue
+    function showDuplicateModal(language, shopUrl, backendMessage) {
+      const titles = {
+        NL: '⚠️ Klant reeds bestaand',
+        FR: '⚠️ Client déjà existant',
+        ENG: '⚠️ Existing client'
+      };
+
+      const texts = {
+        NL: 'Dit BTW-nummer/ondernemingsnummer is reeds gekend bij Veolia. Voor een offerte op maat kunt u onze online shop bezoeken.',
+        FR: 'Ce numéro de TVA/d\'entreprise est déjà connu chez Veolia. Pour une offre personnalisée, vous pouvez consulter notre boutique en ligne.',
+        ENG: 'This VAT/company number is already known at Veolia. For a personalized offer, please visit our online shop.'
+      };
+
+      const btnLabels = {
+        NL: 'Ga naar de shop',
+        FR: 'Aller vers la boutique',
+        ENG: 'Go to the shop'
+      };
+
+      document.getElementById('duplicateModalTitle').textContent =
+        titles[language] || titles.NL;
+
+      document.getElementById('duplicateModalText').textContent =
+        backendMessage || texts[language] || texts.NL;
+
+      const linkEl = document.getElementById('duplicateModalLink');
+      linkEl.textContent = btnLabels[language] || btnLabels.NL;
+      linkEl.href = shopUrl || '#';
+
+      document.getElementById('duplicateModal').classList.add('active');
+    }
+
+    function hideDuplicateModal() {
+      document.getElementById('duplicateModal').classList.remove('active');
     }
 
     function handleSubmit(event) {
@@ -702,49 +851,18 @@
           element.style.display = 'none';
         });
 
-      hideElement('err_duplicate');
+      const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
+      const voornaam = document.getElementById('voornaam').value.trim();
+      const achternaam = document.getElementById('achternaam').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const telefoon = document.getElementById('telefoon').value.trim();
+      const offerte = document.getElementById('offerte').value.trim();
+      const extraInfo = document.getElementById('extra_info').value.trim();
+      const bycId = document.getElementById('byc_id').value.trim();
 
-      const bedrijfsnaam = document
-        .getElementById('bedrijfsnaam')
-        .value
-        .trim();
-
-      const naam = document
-        .getElementById('naam')
-        .value
-        .trim();
-
-      const email = document
-        .getElementById('email')
-        .value
-        .trim();
-
-      const telefoon = document
-        .getElementById('telefoon')
-        .value
-        .trim();
-
-      const offerte = document
-        .getElementById('offerte')
-        .value
-        .trim();
-
-      const bycId = document
-        .getElementById('byc_id')
-        .value
-        .trim();
-
-      const selectedLanguage = document.querySelector(
-        'input[name="taal"]:checked'
-      );
-
-      const selectedIdType = document.querySelector(
-        'input[name="id_type"]:checked'
-      );
-
-      const consentAccepted = document
-        .getElementById('consent_checkbox')
-        .checked;
+      const selectedLanguage = document.querySelector('input[name="taal"]:checked');
+      const selectedIdType = document.querySelector('input[name="id_type"]:checked');
+      const consentAccepted = document.getElementById('consent_checkbox').checked;
 
       let isValid = true;
       let idType = '';
@@ -755,8 +873,13 @@
         isValid = false;
       }
 
-      if (!naam) {
-        showError('err_naam');
+      if (!voornaam) {
+        showError('err_voornaam');
+        isValid = false;
+      }
+
+      if (!achternaam) {
+        showError('err_achternaam');
         isValid = false;
       }
 
@@ -794,11 +917,7 @@
         idType = selectedIdType.value;
 
         if (idType === 'BTW') {
-          idNumber = document
-            .getElementById('id_number_btw')
-            .value
-            .trim();
-
+          idNumber = document.getElementById('id_number_btw').value.trim();
           if (!validateBTW(idNumber)) {
             showError('err_id_number_btw');
             isValid = false;
@@ -806,352 +925,206 @@
         }
 
         if (idType === 'ONDERNEMINGSNUMMER') {
-          idNumber = document
-            .getElementById(
-              'id_number_ondernemingsnummer'
-            )
-            .value
-            .trim();
-
+          idNumber = document.getElementById('id_number_ondernemingsnummer').value.trim();
           if (!validateOndernemingsnummer(idNumber)) {
-            showError(
-              'err_id_number_ondernemingsnummer'
-            );
+            showError('err_id_number_ondernemingsnummer');
             isValid = false;
           }
         }
       }
 
-      if (!isValid) {
-        return;
+      if (!isValid) return;
+
+      const submitButton = document.getElementById('submitBtn');
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
+
+      // Nom complet reconstitué pour rester compatible avec le backend existant
+      const naamComplet = `${voornaam} ${achternaam}`.trim();
+
+      function sendPayload(photoBase64, photoMimeType, photoFileName) {
+        const payload = {
+          byc_id: bycId,
+          bedrijfsnaam: bedrijfsnaam,
+          naam: naamComplet,
+          email: email,
+          telefoon: telefoon,
+          id_type: idType,
+          id_number: idNumber,
+          offerte: offerte,
+          extra_info: extraInfo,
+          taal: selectedLanguage.value,
+          photoBase64: photoBase64 || '',
+          photoMimeType: photoMimeType || '',
+          photoFileName: photoFileName || ''
+        };
+
+        fetch(WEBAPP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Server error: ' + response.status);
+            }
+            return response.json();
+          })
+          .then(result => {
+            if (result.success) {
+              updateSuccessMessage(selectedLanguage.value);
+              document.getElementById('formSection').style.display = 'none';
+              document.getElementById('successMsg').style.display = 'block';
+              return;
+            }
+
+            if (result.code === 'DUPLICATE') {
+              showDuplicateModal(selectedLanguage.value, result.shopUrl, result.message);
+
+              submitButton.disabled = false;
+              submitButton.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+              return;
+            }
+
+            throw new Error(
+              result.error || 'Onbekende fout / Erreur inconnue / Unknown error'
+            );
+          })
+          .catch(error => {
+            alert('Fout / Erreur / Error:\n' + error.message);
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Verstuur aanvraag / Envoyer la demande';
+          });
       }
 
-      const submitButton =
-        document.getElementById('submitBtn');
+      // Lecture de la photo (si fournie) en base64 avant envoi
+      const photoInput = document.getElementById('photo');
+      const photoFile = photoInput && photoInput.files && photoInput.files[0];
 
-      submitButton.disabled = true;
+      if (photoFile) {
+        const reader = new FileReader();
 
-      submitButton.innerHTML =
-        '<span class="spinner"></span>' +
-        'Bezig... / En cours...';
+        reader.onload = function (e) {
+          const base64 = (e.target.result || '').split(',')[1] || '';
+          sendPayload(base64, photoFile.type, photoFile.name);
+        };
 
-      const payload = {
-        byc_id: bycId,
-        bedrijfsnaam: bedrijfsnaam,
-        naam: naam,
-        email: email,
-        telefoon: telefoon,
-        id_type: idType,
-        id_number: idNumber,
-        offerte: offerte,
-        taal: selectedLanguage.value
-      };
+        reader.onerror = function () {
+          sendPayload('', '', '');
+        };
 
-      fetch(WEBAPP_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify(payload)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(
-              'Server error: ' + response.status
-            );
-          }
-
-          return response.json();
-        })
-        .then(result => {
-          if (result.success) {
-            updateSuccessMessage(
-              selectedLanguage.value
-            );
-
-            document.getElementById(
-              'formSection'
-            ).style.display = 'none';
-
-            document.getElementById(
-              'successMsg'
-            ).style.display = 'block';
-
-            return;
-          }
-
-          if (result.code === 'DUPLICATE') {
-            const duplicateAlert =
-              document.getElementById(
-                'err_duplicate'
-              );
-
-            duplicateAlert.textContent =
-              result.message ||
-              'Dit nummer bestaat al in onze database.';
-
-            duplicateAlert.style.display = 'block';
-
-            duplicateAlert.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center'
-            });
-
-            submitButton.disabled = false;
-
-            submitButton.innerHTML =
-              'Verstuur aanvraag / Envoyer la demande';
-
-            return;
-          }
-
-          throw new Error(
-            result.error ||
-            'Onbekende fout / Erreur inconnue / Unknown error'
-          );
-        })
-        .catch(error => {
-          alert(
-            'Fout / Erreur / Error:\n' +
-            error.message
-          );
-
-          submitButton.disabled = false;
-
-          submitButton.innerHTML =
-            'Verstuur aanvraag / Envoyer la demande';
-        });
+        reader.readAsDataURL(photoFile);
+      } else {
+        sendPayload('', '', '');
+      }
     }
 
-    document.addEventListener(
-      'DOMContentLoaded',
-      function () {
-        const params = new URLSearchParams(
-          window.location.search
-        );
+    document.addEventListener('DOMContentLoaded', function () {
+      const params = new URLSearchParams(window.location.search);
+      const bycId = params.get('byc_id');
 
-        const bycId = params.get('byc_id');
+      if (bycId) {
+        document.getElementById('byc_id').value = decodeURIComponent(bycId);
+      }
 
-        if (bycId) {
-          document.getElementById('byc_id').value =
-            decodeURIComponent(bycId);
+      document.getElementById('duplicateModalClose').addEventListener('click', hideDuplicateModal);
+
+      const idTypeRadios = document.querySelectorAll('input[name="id_type"]');
+      const btwInputGroup = document.getElementById('btw-input-group');
+      const ondernemingsnummerInputGroup = document.getElementById('ondernemingsnummer-input-group');
+      const btwInput = document.getElementById('id_number_btw');
+      const ondernemingsnummerInput = document.getElementById('id_number_ondernemingsnummer');
+      const btwCounter = document.getElementById('btw_counter');
+      const ondernemingsnummerCounter = document.getElementById('ondernemingsnummer_counter');
+
+      idTypeRadios.forEach(radio => {
+        radio.addEventListener('change', event => {
+          if (event.target.value === 'BTW') {
+            btwInputGroup.classList.add('active');
+            ondernemingsnummerInputGroup.classList.remove('active');
+            btwInput.required = true;
+            ondernemingsnummerInput.required = false;
+            hideElement('err_id_number_btw');
+            hideElement('err_id_number_ondernemingsnummer');
+          } else {
+            btwInputGroup.classList.remove('active');
+            ondernemingsnummerInputGroup.classList.add('active');
+            btwInput.required = false;
+            ondernemingsnummerInput.required = true;
+            hideElement('err_id_number_btw');
+            hideElement('err_id_number_ondernemingsnummer');
+          }
+        });
+      });
+
+      btwInput.addEventListener('keydown', event => {
+        if (
+          btwInput.selectionStart <= 2 &&
+          (event.key === 'Backspace' || event.key === 'Delete')
+        ) {
+          event.preventDefault();
+        }
+      });
+
+      btwInput.addEventListener('input', () => {
+        let value = btwInput.value.toUpperCase();
+
+        if (!value.startsWith('BE')) {
+          value = 'BE' + value.replace(/^B?E?/, '');
         }
 
-        const idTypeRadios =
-          document.querySelectorAll(
-            'input[name="id_type"]'
-          );
+        const digits = value.substring(2).replace(/\D/g, '').substring(0, 10);
+        btwInput.value = 'BE' + digits;
+        btwCounter.textContent = `BE + ${digits.length}/10 cijfers`;
+        btwInput.classList.remove('id-valid', 'id-invalid');
 
-        const btwInputGroup =
-          document.getElementById(
-            'btw-input-group'
-          );
+        if (digits.length === 10) {
+          btwInput.classList.add('id-valid');
+          btwCounter.style.color = '#27ae60';
+        } else if (digits.length > 0) {
+          btwInput.classList.add('id-invalid');
+          btwCounter.style.color = '#e74c3c';
+        } else {
+          btwCounter.style.color = '#888888';
+        }
+      });
 
-        const ondernemingsnummerInputGroup =
-          document.getElementById(
-            'ondernemingsnummer-input-group'
-          );
+      btwInput.addEventListener('focus', () => {
+        if (!btwInput.value) {
+          btwInput.value = 'BE';
+          btwCounter.textContent = 'BE + 0/10 cijfers';
+        }
 
-        const btwInput =
-          document.getElementById(
-            'id_number_btw'
-          );
-
-        const ondernemingsnummerInput =
-          document.getElementById(
-            'id_number_ondernemingsnummer'
-          );
-
-        const btwCounter =
-          document.getElementById(
-            'btw_counter'
-          );
-
-        const ondernemingsnummerCounter =
-          document.getElementById(
-            'ondernemingsnummer_counter'
-          );
-
-        idTypeRadios.forEach(radio => {
-          radio.addEventListener(
-            'change',
-            event => {
-              hideElement('err_duplicate');
-
-              if (event.target.value === 'BTW') {
-                btwInputGroup.classList.add(
-                  'active'
-                );
-
-                ondernemingsnummerInputGroup.classList.remove(
-                  'active'
-                );
-
-                btwInput.required = true;
-                ondernemingsnummerInput.required = false;
-
-                hideElement(
-                  'err_id_number_btw'
-                );
-
-                hideElement(
-                  'err_id_number_ondernemingsnummer'
-                );
-              } else {
-                btwInputGroup.classList.remove(
-                  'active'
-                );
-
-                ondernemingsnummerInputGroup.classList.add(
-                  'active'
-                );
-
-                btwInput.required = false;
-                ondernemingsnummerInput.required = true;
-
-                hideElement(
-                  'err_id_number_btw'
-                );
-
-                hideElement(
-                  'err_id_number_ondernemingsnummer'
-                );
-              }
-            }
-          );
-        });
-
-        btwInput.addEventListener(
-          'keydown',
-          event => {
-            if (
-              btwInput.selectionStart <= 2 &&
-              (
-                event.key === 'Backspace' ||
-                event.key === 'Delete'
-              )
-            ) {
-              event.preventDefault();
-            }
+        setTimeout(() => {
+          if (btwInput.selectionStart < 2) {
+            btwInput.setSelectionRange(2, 2);
           }
-        );
+        }, 0);
+      });
 
-        btwInput.addEventListener(
-          'input',
-          () => {
-            let value =
-              btwInput.value.toUpperCase();
+      btwInput.addEventListener('click', () => {
+        if (btwInput.selectionStart < 2) {
+          btwInput.setSelectionRange(2, 2);
+        }
+      });
 
-            if (!value.startsWith('BE')) {
-              value =
-                'BE' +
-                value.replace(/^B?E?/, '');
-            }
+      ondernemingsnummerInput.addEventListener('input', () => {
+        const digits = ondernemingsnummerInput.value.replace(/\D/g, '').substring(0, 10);
+        ondernemingsnummerInput.value = digits;
+        ondernemingsnummerCounter.textContent = `${digits.length}/10 cijfers`;
+        ondernemingsnummerInput.classList.remove('id-valid', 'id-invalid');
 
-            const digits = value
-              .substring(2)
-              .replace(/\D/g, '')
-              .substring(0, 10);
-
-            btwInput.value = 'BE' + digits;
-
-            btwCounter.textContent =
-              `BE + ${digits.length}/10 cijfers`;
-
-            btwInput.classList.remove(
-              'id-valid',
-              'id-invalid'
-            );
-
-            if (digits.length === 10) {
-              btwInput.classList.add(
-                'id-valid'
-              );
-
-              btwCounter.style.color =
-                '#27ae60';
-            } else if (digits.length > 0) {
-              btwInput.classList.add(
-                'id-invalid'
-              );
-
-              btwCounter.style.color =
-                '#e74c3c';
-            } else {
-              btwCounter.style.color =
-                '#888888';
-            }
-          }
-        );
-
-        btwInput.addEventListener(
-          'focus',
-          () => {
-            if (!btwInput.value) {
-              btwInput.value = 'BE';
-
-              btwCounter.textContent =
-                'BE + 0/10 cijfers';
-            }
-
-            setTimeout(() => {
-              if (btwInput.selectionStart < 2) {
-                btwInput.setSelectionRange(2, 2);
-              }
-            }, 0);
-          }
-        );
-
-        btwInput.addEventListener(
-          'click',
-          () => {
-            if (btwInput.selectionStart < 2) {
-              btwInput.setSelectionRange(2, 2);
-            }
-          }
-        );
-
-        ondernemingsnummerInput.addEventListener(
-          'input',
-          () => {
-            const digits =
-              ondernemingsnummerInput.value
-                .replace(/\D/g, '')
-                .substring(0, 10);
-
-            ondernemingsnummerInput.value =
-              digits;
-
-            ondernemingsnummerCounter.textContent =
-              `${digits.length}/10 cijfers`;
-
-            ondernemingsnummerInput.classList.remove(
-              'id-valid',
-              'id-invalid'
-            );
-
-            if (digits.length === 10) {
-              ondernemingsnummerInput.classList.add(
-                'id-valid'
-              );
-
-              ondernemingsnummerCounter.style.color =
-                '#27ae60';
-            } else if (digits.length > 0) {
-              ondernemingsnummerInput.classList.add(
-                'id-invalid'
-              );
-
-              ondernemingsnummerCounter.style.color =
-                '#e74c3c';
-            } else {
-              ondernemingsnummerCounter.style.color =
-                '#888888';
-            }
-          }
-        );
-      }
-    );
+        if (digits.length === 10) {
+          ondernemingsnummerInput.classList.add('id-valid');
+          ondernemingsnummerCounter.style.color = '#27ae60';
+        } else if (digits.length > 0) {
+          ondernemingsnummerInput.classList.add('id-invalid');
+          ondernemingsnummerCounter.style.color = '#e74c3c';
+        } else {
+          ondernemingsnummerCounter.style.color = '#888888';
+        }
+      });
+    });
   </script>
 </body>
 </html>
