@@ -117,12 +117,10 @@
       />
     </div>
 
-    <!-- Loading state -->
     <div id="loadingState">
       <p>Bezig met laden... / Chargement... / Loading...</p>
     </div>
 
-    <!-- Confirm state (shown when the lead is valid and not yet cancelled) -->
     <div id="confirmState" class="hidden">
       <div class="icon-title">⚠️</div>
       <h1 id="confirmTitle"></h1>
@@ -132,21 +130,18 @@
       </button>
     </div>
 
-    <!-- Success state -->
     <div id="successState" class="hidden">
       <div class="icon-title">✅</div>
       <h1 id="successTitle"></h1>
       <p id="successText"></p>
     </div>
 
-    <!-- Already cancelled state -->
     <div id="alreadyState" class="hidden">
       <div class="icon-title">ℹ️</div>
       <h1 id="alreadyTitle"></h1>
       <p id="alreadyText"></p>
     </div>
 
-    <!-- Not found / error state -->
     <div id="errorState" class="hidden">
       <div class="icon-title">❌</div>
       <h1 id="errorTitle"></h1>
@@ -155,34 +150,9 @@
   </div>
 
   <script>
-    // Apps Script Web App URL — must match the backend deployment.
     const WEBAPP_URL =
       "https://script.google.com/macros/s/AKfycbxGzZ7dPzZMniaIUnQicQ3GOaF9BhecnVhwD66ds3I6MZ_wkX_eikQdT4Uu7TrpwNk1/exec";
-    const TEXTS = {
-      NL: {
-        ...
-        successTitle: 'Geannuleerd',
-        successText:
-          'Uw aanvraag werd succesvol geannuleerd. U ontvangt hiervan ook een bevestiging per e-mail. Bedankt voor uw bericht.',
-        ...
-      },
-      FR: {
-        ...
-        successTitle: 'Annulé',
-        successText:
-          "Votre demande a été annulée avec succès. Vous recevrez également une confirmation par e-mail. Merci pour votre message.",
-        ...
-      },
-      ENG: {
-        ...
-        successTitle: 'Cancelled',
-        successText:
-          'Your request has been successfully cancelled. You will also receive a confirmation email. Thank you for letting us know.',
-        ...
-      }
-    };
 
-    // Trilingual text dictionary
     const TEXTS = {
       NL: {
         confirmTitle: 'Bevestig annulering',
@@ -191,7 +161,7 @@
         confirmBtn: 'Ja, annuleren',
         successTitle: 'Geannuleerd',
         successText:
-          'Uw aanvraag werd succesvol geannuleerd. Bedankt voor uw bericht.',
+          'Uw aanvraag werd succesvol geannuleerd. U ontvangt hiervan ook een bevestiging per e-mail. Bedankt voor uw bericht.',
         alreadyTitle: 'Al geannuleerd',
         alreadyText: 'U heeft deze aanvraag al eerder geannuleerd.',
         errorTitle: 'Niet gevonden',
@@ -205,7 +175,7 @@
         confirmBtn: 'Oui, annuler',
         successTitle: 'Annulé',
         successText:
-          "Votre demande a été annulée avec succès. Merci pour votre message.",
+          "Votre demande a été annulée avec succès. Vous recevrez également une confirmation par e-mail. Merci pour votre message.",
         alreadyTitle: 'Déjà annulé',
         alreadyText: 'Vous avez déjà annulé cette demande.',
         errorTitle: 'Introuvable',
@@ -219,7 +189,7 @@
         confirmBtn: 'Yes, cancel',
         successTitle: 'Cancelled',
         successText:
-          'Your request has been successfully cancelled. Thank you for letting us know.',
+          'Your request has been successfully cancelled. You will also receive a confirmation email. Thank you for letting us know.',
         alreadyTitle: 'Already cancelled',
         alreadyText: 'You have already cancelled this request.',
         errorTitle: 'Not found',
@@ -277,11 +247,6 @@
       showState('errorState');
     }
 
-    /**
-     * Initial, read-only status check.
-     * Safe to be triggered automatically by email security scanners,
-     * since no data is modified here (confirm is NOT sent).
-     */
     function checkStatus() {
       const url = `${WEBAPP_URL}?action=cancel&id=${encodeURIComponent(currentId)}`;
 
@@ -315,10 +280,6 @@
         });
     }
 
-    /**
-     * Actual cancellation, triggered only by a real user click on the
-     * confirmation button (confirm=1 is sent).
-     */
     function performCancel() {
       const btn = document.getElementById('confirmBtn');
       btn.disabled = true;
