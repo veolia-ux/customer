@@ -422,37 +422,20 @@
           </div>
         </div>
 
-        <!-- Nom scindé en Voornaam / Achternaam pour clarifier ce qui est attendu -->
+        <!-- Champ unique nom + prénom (fusionné, libellé clarifié) -->
         <div class="form-group">
-          <label for="voornaam">
-            Voornaam /
-            <span class="fr">Prénom</span>
+          <label for="naam">
+            Naam en voornaam /
+            <span class="fr">Nom et prénom</span>
           </label>
 
           <input
             type="text"
-            id="voornaam"
-            placeholder="Uw voornaam / Votre prénom"
+            id="naam"
+            placeholder="Uw naam en voornaam / Votre nom et prénom"
           />
 
-          <div class="error-msg" id="err_voornaam">
-            Verplicht veld / Champ obligatoire
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="achternaam">
-            Achternaam /
-            <span class="fr">Nom de famille</span>
-          </label>
-
-          <input
-            type="text"
-            id="achternaam"
-            placeholder="Uw achternaam / Votre nom de famille"
-          />
-
-          <div class="error-msg" id="err_achternaam">
+          <div class="error-msg" id="err_naam">
             Verplicht veld / Champ obligatoire
           </div>
         </div>
@@ -599,7 +582,7 @@
           </div>
         </div>
 
-        <!-- Nouveau champ libre : infos concurrents, contexte, etc. -->
+        <!-- Champ libre générique — aucune mention de concurrent -->
         <div class="form-group">
           <label for="extra_info">
             Extra informatie (optioneel) /
@@ -608,11 +591,11 @@
 
           <textarea
             id="extra_info"
-            placeholder="Bv. huidig contract, concurrent, opmerkingen... / Ex : contrat actuel, concurrent, remarques..."
+            placeholder="Opmerkingen of nuttige informatie... / Remarques ou informations utiles..."
           ></textarea>
         </div>
 
-        <!-- Nouveau champ : photo (phase 2), optionnel -->
+        <!-- Photo optionnelle — description générique -->
         <div class="form-group">
           <label for="photo">
             Foto toevoegen (optioneel) /
@@ -626,8 +609,8 @@
           />
 
           <div class="byc-label">
-            Bv. foto van uw huidig contract met de concurrent /
-            Ex : photo de votre contrat actuel avec le concurrent
+            U kunt hier eventueel een foto toevoegen indien relevant /
+            Vous pouvez ajouter une photo ici si pertinent
           </div>
         </div>
 
@@ -852,8 +835,7 @@
         });
 
       const bedrijfsnaam = document.getElementById('bedrijfsnaam').value.trim();
-      const voornaam = document.getElementById('voornaam').value.trim();
-      const achternaam = document.getElementById('achternaam').value.trim();
+      const naam = document.getElementById('naam').value.trim();
       const email = document.getElementById('email').value.trim();
       const telefoon = document.getElementById('telefoon').value.trim();
       const offerte = document.getElementById('offerte').value.trim();
@@ -873,13 +855,8 @@
         isValid = false;
       }
 
-      if (!voornaam) {
-        showError('err_voornaam');
-        isValid = false;
-      }
-
-      if (!achternaam) {
-        showError('err_achternaam');
+      if (!naam) {
+        showError('err_naam');
         isValid = false;
       }
 
@@ -939,14 +916,11 @@
       submitButton.disabled = true;
       submitButton.innerHTML = '<span class="spinner"></span>Bezig... / En cours...';
 
-      // Nom complet reconstitué pour rester compatible avec le backend existant
-      const naamComplet = `${voornaam} ${achternaam}`.trim();
-
       function sendPayload(photoBase64, photoMimeType, photoFileName) {
         const payload = {
           byc_id: bycId,
           bedrijfsnaam: bedrijfsnaam,
-          naam: naamComplet,
+          naam: naam,
           email: email,
           telefoon: telefoon,
           id_type: idType,
