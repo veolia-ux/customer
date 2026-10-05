@@ -998,7 +998,8 @@
       const bycId = params.get('byc_id');
 
       if (bycId) {
-        document.getElementById('byc_id').value = decodeURIComponent(bycId);
+        // URLSearchParams a déjà décodé la valeur : pas de decodeURIComponent
+        document.getElementById('byc_id').value = bycId;
       }
 
       document.getElementById('duplicateModalClose').addEventListener('click', hideDuplicateModal);
